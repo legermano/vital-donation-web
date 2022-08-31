@@ -1,8 +1,10 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import useEventBus from "../../modules/eventBus";
 import useFormValidation from "../../modules/formValidation";
 
-defineProps({
+const { bus } = useEventBus();
+const props = defineProps({
   horizontal: {
     type: Boolean,
     default: false,
@@ -13,14 +15,28 @@ defineProps({
   },
   title: {
     type: String,
-    default: "Email",
+    default: "Senha",
+  },
+  validateValue: {
+    type: Boolean,
+    default: true,
   },
 });
 
-const { errors, validateEmailField } = useFormValidation();
+watch(
+  () => bus.value.get("validateInput"),
+  () => validateInput()
+);
+
+const { errors, validatePasswordField, validateRequiredField } =
+  useFormValidation();
 const input = ref(null);
 const validateInput = () => {
-  validateEmailField("email", input.value);
+  if (props.validateValue) {
+    validatePasswordField("senha", input.value);
+  } else {
+    validateRequiredField("senha", input.value);
+  }
 };
 
 defineExpose({
@@ -40,25 +56,25 @@ defineExpose({
       <div class="field">
         <div
           class="control has-icons-left"
-          :class="{ 'has-icons-right': errors.email }"
+          :class="{ 'has-icons-right': errors.senha }"
         >
           <input
             class="input"
-            type="email"
+            type="password"
             :placeholder="title"
-            :class="{ 'is-danger': errors.email }"
+            :class="{ 'is-danger': errors.senha }"
             v-model="input"
             @blur="validateInput"
             @input="$emit('update:modelValue', $event.target.value)"
           />
           <span class="icon is-small is-left">
-            <i class="fas fa-envelope"></i>
+            <i class="fas fa-lock"></i>
           </span>
-          <span v-if="errors.email" class="icon is-small is-right">
+          <span v-if="errors.senha" class="icon is-small is-right">
             <i class="fas fa-exclamation-triangle"></i>
           </span>
         </div>
-        <p v-if="errors.email" class="help is-danger">{{ errors.email }}</p>
+        <p v-if="errors.senha" class="help is-danger">{{ errors.senha }}</p>
       </div>
     </div>
   </div>

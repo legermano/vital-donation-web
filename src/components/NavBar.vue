@@ -51,7 +51,7 @@ function closeBurger() {
           Home
         </RouterLink>
         <RouterLink to="/about" class="navbar-item" @click="closeBurger">
-          About
+          Sobre
         </RouterLink>
       </div>
 
@@ -59,14 +59,14 @@ function closeBurger() {
         <div class="navbar-item">
           <div class="buttons">
             <a class="button is-danger is-light">
-              <strong>Sign up</strong>
+              <strong>Criar nova conta</strong>
             </a>
             <RouterLink
               to="/login"
               class="button is-light"
               @click="closeBurger"
             >
-              Log in
+              Entrar
             </RouterLink>
           </div>
         </div>

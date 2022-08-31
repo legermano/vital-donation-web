@@ -13,14 +13,14 @@ defineProps({
   },
   title: {
     type: String,
-    default: "Email",
+    default: "CPF",
   },
 });
 
-const { errors, validateEmailField } = useFormValidation();
+const { errors, validateCPFField } = useFormValidation();
 const input = ref(null);
 const validateInput = () => {
-  validateEmailField("email", input.value);
+  validateCPFField("cpf", input.value);
 };
 
 defineExpose({
@@ -40,25 +40,25 @@ defineExpose({
       <div class="field">
         <div
           class="control has-icons-left"
-          :class="{ 'has-icons-right': errors.email }"
+          :class="{ 'has-icons-right': errors.cpf }"
         >
           <input
             class="input"
-            type="email"
+            type="text"
             :placeholder="title"
-            :class="{ 'is-danger': errors.email }"
+            :class="{ 'is-danger': errors.cpf }"
             v-model="input"
             @blur="validateInput"
             @input="$emit('update:modelValue', $event.target.value)"
           />
           <span class="icon is-small is-left">
-            <i class="fas fa-envelope"></i>
+            <i class="fas fa-id-card"></i>
           </span>
-          <span v-if="errors.email" class="icon is-small is-right">
+          <span v-if="errors.cpf" class="icon is-small is-right">
             <i class="fas fa-exclamation-triangle"></i>
           </span>
         </div>
-        <p v-if="errors.email" class="help is-danger">{{ errors.email }}</p>
+        <p v-if="errors.cpf" class="help is-danger">{{ errors.cpf }}</p>
       </div>
     </div>
   </div>
