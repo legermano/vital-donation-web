@@ -1,9 +1,8 @@
 <script setup>
-import { ref, watch } from "vue";
-import useEventBus from "../../modules/eventBus";
+import { ref } from "vue";
 import useFormValidation from "../../modules/formValidation";
+import BaseField from "./BaseField.vue";
 
-const { bus } = useEventBus();
 const props = defineProps({
   horizontal: {
     type: Boolean,
@@ -22,12 +21,6 @@ const props = defineProps({
     default: true,
   },
 });
-
-watch(
-  () => bus.value.get("validateInput"),
-  () => validateInput()
-);
-
 const { errors, validatePasswordField, validateRequiredField } =
   useFormValidation();
 const input = ref(null);
@@ -38,44 +31,35 @@ const validateInput = () => {
     validateRequiredField("senha", input.value);
   }
 };
-
-defineExpose({
-  validateInput,
-});
 </script>
 
 <template>
-  <div class="field" :class="{ 'is-horizontal': horizontal }">
+  <BaseField
+    :horizontal="horizontal"
+    :show-title="showTitle"
+    :title="title"
+    :validate-function="validateInput"
+  >
     <div
-      v-if="showTitle"
-      :class="{ 'field-label': horizontal, 'is-normal': horizontal }"
+      class="control has-icons-left"
+      :class="{ 'has-icons-right': errors.senha }"
     >
-      <label class="label">{{ title }}</label>
+      <input
+        class="input"
+        type="password"
+        :placeholder="title"
+        :class="{ 'is-danger': errors.senha }"
+        v-model="input"
+        @blur="validateInput"
+        @input="$emit('update:modelValue', $event.target.value)"
+      />
+      <span class="icon is-small is-left">
+        <i class="fas fa-lock"></i>
+      </span>
+      <span v-if="errors.senha" class="icon is-small is-right">
+        <i class="fas fa-exclamation-triangle"></i>
+      </span>
     </div>
-    <div class="field-body">
-      <div class="field">
-        <div
-          class="control has-icons-left"
-          :class="{ 'has-icons-right': errors.senha }"
-        >
-          <input
-            class="input"
-            type="password"
-            :placeholder="title"
-            :class="{ 'is-danger': errors.senha }"
-            v-model="input"
-            @blur="validateInput"
-            @input="$emit('update:modelValue', $event.target.value)"
-          />
-          <span class="icon is-small is-left">
-            <i class="fas fa-lock"></i>
-          </span>
-          <span v-if="errors.senha" class="icon is-small is-right">
-            <i class="fas fa-exclamation-triangle"></i>
-          </span>
-        </div>
-        <p v-if="errors.senha" class="help is-danger">{{ errors.senha }}</p>
-      </div>
-    </div>
-  </div>
+    <p v-if="errors.senha" class="help is-danger">{{ errors.senha }}</p>
+  </BaseField>
 </template>

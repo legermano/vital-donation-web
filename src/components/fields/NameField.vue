@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import useFormValidation from "../../modules/formValidation";
+import BaseField from "./BaseField.vue";
 
 defineProps({
   horizontal: {
@@ -16,50 +17,38 @@ defineProps({
     default: "Nome",
   },
 });
-
 const { errors, validateNameField } = useFormValidation();
 const input = ref(null);
-const validateInput = () => {
-  validateNameField("nome", input.value);
-};
-
-defineExpose({
-  validateInput,
-});
+const validateInput = () => validateNameField("nome", input.value);
 </script>
 
 <template>
-  <div class="field" :class="{ 'is-horizontal': horizontal }">
+  <BaseField
+    :horizontal="horizontal"
+    :show-title="showTitle"
+    :title="title"
+    :validate-function="validateInput"
+  >
     <div
-      v-if="showTitle"
-      :class="{ 'field-label': horizontal, 'is-normal': horizontal }"
+      class="control has-icons-left"
+      :class="{ 'has-icons-right': errors.nome }"
     >
-      <label class="label">{{ title }}</label>
+      <input
+        class="input"
+        type="text"
+        :placeholder="title"
+        :class="{ 'is-danger': errors.nome }"
+        v-model="input"
+        @blur="validateInput"
+        @input="$emit('update:modelValue', $event.target.value)"
+      />
+      <span class="icon is-small is-left">
+        <i class="fas fa-user"></i>
+      </span>
+      <span v-if="errors.nome" class="icon is-small is-right">
+        <i class="fas fa-exclamation-triangle"></i>
+      </span>
     </div>
-    <div class="field-body">
-      <div class="field">
-        <div
-          class="control has-icons-left"
-          :class="{ 'has-icons-right': errors.nome }"
-        >
-          <input
-            class="input"
-            type="text"
-            :placeholder="title"
-            :class="{ 'is-danger': errors.nome }"
-            v-model="input"
-            @blur="validateInput"
-            @input="$emit('update:modelValue', $event.target.value)"
-          />
-          <span class="icon is-small is-left">
-            <i class="fas fa-user"></i>
-          </span>
-          <span v-if="errors.nome" class="icon is-small is-right">
-            <i class="fas fa-exclamation-triangle"></i>
-          </span>
-        </div>
-        <p v-if="errors.nome" class="help is-danger">{{ errors.nome }}</p>
-      </div>
-    </div>
-  </div>
+    <p v-if="errors.nome" class="help is-danger">{{ errors.nome }}</p>
+  </BaseField>
 </template>

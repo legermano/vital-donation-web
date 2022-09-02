@@ -55,15 +55,16 @@ export default function useValidators() {
     // Validate the first digit
     for (let i = 0; i < 9; i++) {
       add += parseInt(cpf.charAt(i)) * (10 - i);
-      rev = 11 - (add % 11);
+    }
 
-      if (rev == 10 || rev == 1) {
-        rev = 0;
-      }
+    rev = 11 - (add % 11);
 
-      if (rev != parseInt(cpf.chart(9))) {
-        return false;
-      }
+    if (rev == 10 || rev == 1) {
+      rev = 0;
+    }
+
+    if (rev != parseInt(cpf.charAt(9))) {
+      return false;
     }
 
     // Validate the second digit

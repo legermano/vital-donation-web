@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import useFormValidation from "../../modules/formValidation";
+import BaseField from "./BaseField.vue";
 
 defineProps({
   horizontal: {
@@ -16,50 +17,38 @@ defineProps({
     default: "Email",
   },
 });
-
 const { errors, validateEmailField } = useFormValidation();
 const input = ref(null);
-const validateInput = () => {
-  validateEmailField("email", input.value);
-};
-
-defineExpose({
-  validateInput,
-});
+const validateInput = () => validateEmailField("email", input.value);
 </script>
 
 <template>
-  <div class="field" :class="{ 'is-horizontal': horizontal }">
+  <BaseField
+    :horizontal="horizontal"
+    :show-title="showTitle"
+    :title="title"
+    :validate-function="validateInput"
+  >
     <div
-      v-if="showTitle"
-      :class="{ 'field-label': horizontal, 'is-normal': horizontal }"
+      class="control has-icons-left"
+      :class="{ 'has-icons-right': errors.email }"
     >
-      <label class="label">{{ title }}</label>
+      <input
+        class="input"
+        type="email"
+        :placeholder="title"
+        :class="{ 'is-danger': errors.email }"
+        v-model="input"
+        @blur="validateInput"
+        @input="$emit('update:modelValue', $event.target.value)"
+      />
+      <span class="icon is-small is-left">
+        <i class="fas fa-envelope"></i>
+      </span>
+      <span v-if="errors.email" class="icon is-small is-right">
+        <i class="fas fa-exclamation-triangle"></i>
+      </span>
     </div>
-    <div class="field-body">
-      <div class="field">
-        <div
-          class="control has-icons-left"
-          :class="{ 'has-icons-right': errors.email }"
-        >
-          <input
-            class="input"
-            type="email"
-            :placeholder="title"
-            :class="{ 'is-danger': errors.email }"
-            v-model="input"
-            @blur="validateInput"
-            @input="$emit('update:modelValue', $event.target.value)"
-          />
-          <span class="icon is-small is-left">
-            <i class="fas fa-envelope"></i>
-          </span>
-          <span v-if="errors.email" class="icon is-small is-right">
-            <i class="fas fa-exclamation-triangle"></i>
-          </span>
-        </div>
-        <p v-if="errors.email" class="help is-danger">{{ errors.email }}</p>
-      </div>
-    </div>
-  </div>
+    <p v-if="errors.email" class="help is-danger">{{ errors.email }}</p>
+  </BaseField>
 </template>
