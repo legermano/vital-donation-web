@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import { useAlertStore, useAuthStore, useFormValidationStore } from "@/stores";
+import { HomeView } from "@/views";
+import accountRoutes from "./account.routes";
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   linkActiveClass: "is-active",
   routes: [
@@ -11,11 +13,6 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/login",
-      name: "login",
-      component: () => import("@/views/LoginView.vue"),
-    },
-    {
       path: "/about",
       name: "about",
       // route level code-splitting
@@ -23,7 +20,26 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/AboutView.vue"),
     },
+    { ...accountRoutes },
   ],
 });
 
-export default router;
+router.beforeEach(async (to) => {
+  // Clear alert on route change
+  const alertStore = useAlertStore();
+  alertStore.clear();
+
+  // Clear form validation on route change
+  const formValidationStore = useFormValidationStore();
+  formValidationStore.clear();
+
+  // Redirect to login page if not logged in and trying to access restricted page
+  const publicPages = ["/", "/account/login", "/account/register"];
+  const authRequired = !publicPages.includes(to.path);
+  const authStore = useAuthStore();
+
+  if (authRequired && !authStore.isLoggedIn) {
+    authStore.returnUrl = to.fullPath;
+    return "/account/login";
+  }
+});

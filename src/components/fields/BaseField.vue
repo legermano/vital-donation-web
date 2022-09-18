@@ -1,6 +1,6 @@
 <script setup>
 import { watch } from "vue";
-import useEventBus from "../../modules/eventBus";
+import { useEventBus } from "@/modules";
 
 const { bus } = useEventBus();
 

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
-import useFormValidation from "../../modules/formValidation";
+import { storeToRefs } from "pinia";
+import { useFormValidationStore } from "@/stores";
 import BaseField from "./BaseField.vue";
 
 defineProps({
@@ -17,7 +18,8 @@ defineProps({
     default: "Nome",
   },
 });
-const { errors, validateNameField } = useFormValidation();
+const { validateNameField } = useFormValidationStore();
+const { errors } = storeToRefs(useFormValidationStore());
 const input = ref(null);
 const validateInput = () => validateNameField("nome", input.value);
 </script>

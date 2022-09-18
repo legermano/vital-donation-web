@@ -1,18 +1,18 @@
 <script setup>
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores";
 
+const { isLoggedIn, user } = storeToRefs(useAuthStore());
 const showBurger = ref(false);
-
-function toogleBurger() {
-  showBurger.value = !showBurger.value;
-}
-
-function closeBurger() {
-  if (showBurger.value) {
-    showBurger.value = false;
-  }
-}
+const toogleBurger = () => (showBurger.value = !showBurger.value);
+const closeBurger = () => (showBurger.value = false);
+const logout = () => {
+  closeBurger();
+  const { logout } = useAuthStore();
+  logout();
+};
 </script>
 
 <template>
@@ -56,18 +56,53 @@ function closeBurger() {
       </div>
 
       <div class="navbar-end">
-        <div class="navbar-item">
+        <div v-if="!isLoggedIn" class="navbar-item">
           <div class="buttons">
-            <a class="button is-danger is-light">
-              <strong>Criar nova conta</strong>
-            </a>
             <RouterLink
-              to="/login"
+              to="/account/register"
+              class="button is-danger is-light"
+              @click="closeBurger"
+            >
+              <strong>Criar nova conta</strong>
+            </RouterLink>
+            <RouterLink
+              to="/account/login"
               class="button is-light"
               @click="closeBurger"
             >
               Entrar
             </RouterLink>
+          </div>
+        </div>
+        <div v-else class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link is-arrowless">
+            <figure class="image">
+              <img
+                class="is-rounded"
+                :src="`https://ui-avatars.com/api/?name=${user.name}`"
+              />
+            </figure>
+            <div class="name">{{ user.name }}</div>
+          </a>
+          <div class="navbar-dropdown">
+            <RouterLink
+              to="/user/edit"
+              class="navbar-item"
+              @click="closeBurger"
+            >
+              <span class="columns is-centered icon-text">
+                <span class="column icon">
+                  <i class="fas fa-pencil"></i>
+                </span>
+                <span class="column">Editar dados</span>
+              </span>
+            </RouterLink>
+            <button
+              class="navbar-item button is-danger is-light is-fullwidth"
+              @click="logout"
+            >
+              <strong>Logout</strong>
+            </button>
           </div>
         </div>
       </div>
@@ -79,5 +114,8 @@ function closeBurger() {
 a.navbar-item.is-active,
 a.navbar-item:hover {
   color: #ef2e55;
+}
+.name {
+  margin: 0 1rem;
 }
 </style>

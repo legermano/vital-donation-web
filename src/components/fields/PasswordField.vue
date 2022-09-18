@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
-import useFormValidation from "../../modules/formValidation";
+import { storeToRefs } from "pinia";
+import { useFormValidationStore } from "@/stores";
 import BaseField from "./BaseField.vue";
 
 const props = defineProps({
@@ -21,8 +22,9 @@ const props = defineProps({
     default: true,
   },
 });
-const { errors, validatePasswordField, validateRequiredField } =
-  useFormValidation();
+const { validatePasswordField, validateRequiredField } =
+  useFormValidationStore();
+const { errors } = storeToRefs(useFormValidationStore());
 const input = ref(null);
 const validateInput = () => {
   if (props.validateValue) {
