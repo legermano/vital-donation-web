@@ -36,7 +36,7 @@ const logout = () => {
         <span aria-hidden="true"></span>
       </a>
 
-      <RouterLink to="/" class="navbar-item">
+      <RouterLink to="/" class="navbar-item" @click="closeBurger">
         <img src="@/assets/logo.png" width="32" height="28" />
       </RouterLink>
     </div>
@@ -47,10 +47,11 @@ const logout = () => {
       :class="{ 'is-active': showBurger }"
     >
       <div class="navbar-start">
-        <RouterLink to="/" class="navbar-item" @click="closeBurger">
-          Home
-        </RouterLink>
-        <RouterLink to="/about" class="navbar-item" @click="closeBurger">
+        <RouterLink
+          :to="{ path: '/', hash: '#scrollDiv' }"
+          class="navbar-item"
+          @click="closeBurger"
+        >
           Sobre
         </RouterLink>
       </div>

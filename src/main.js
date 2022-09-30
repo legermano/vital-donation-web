@@ -5,7 +5,7 @@ import { VueMaskDirective } from "v-mask";
 import App from "@/App.vue";
 import { router } from "@/router";
 
-import "@fortawesome/fontawesome-free/css/all.css";
+import "@/assets/main.scss";
 
 // Workaround for Vue 3 while the lib is not fully compatible
 const vMaskV2 = VueMaskDirective;

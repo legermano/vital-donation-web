@@ -1,3 +1,9 @@
+<script setup>
+import HomeBanner from "@/components/HomeBanner.vue";
+import DownArrows from "@/components/DownArrows.vue";
+</script>
+
 <template>
-  <h1>Vital Donation Web</h1>
+  <HomeBanner />
+  <DownArrows to="#scrollDiv" />
 </template>

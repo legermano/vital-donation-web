@@ -22,6 +22,18 @@ export const router = createRouter({
     },
     { ...accountRoutes },
   ],
+  scrollBehavior(to) {
+    if (to.hash) {
+      return {
+        el: to.hash,
+        behavior: "smooth",
+      };
+    } else {
+      return {
+        top: 0,
+      };
+    }
+  },
 });
 
 router.beforeEach(async (to) => {
