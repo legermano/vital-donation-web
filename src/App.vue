@@ -1,12 +1,12 @@
 <script setup>
 import { RouterView } from "vue-router";
-import { NavBar, AlertNotification } from "@/components";
+import { NavBar, NotificationCard } from "@/components";
 </script>
 
 <template>
   <main>
     <NavBar />
-    <AlertNotification />
+    <NotificationCard />
     <RouterView />
   </main>
 </template>

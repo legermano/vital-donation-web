@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useAlertStore, useAuthStore, useFormValidationStore } from "@/stores";
+import { useAuthStore, useFormValidationStore } from "@/stores";
 import { HomeView } from "@/views";
 import accountRoutes from "./account.routes";
 
@@ -20,6 +20,11 @@ export const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/AboutView.vue"),
     },
+    {
+      path: "/user/edit",
+      name: "user",
+      component: () => import("@/views/UserView.vue"),
+    },
     { ...accountRoutes },
   ],
   scrollBehavior(to) {
@@ -37,10 +42,6 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  // Clear alert on route change
-  const alertStore = useAlertStore();
-  alertStore.clear();
-
   // Clear form validation on route change
   const formValidationStore = useFormValidationStore();
   formValidationStore.clear();

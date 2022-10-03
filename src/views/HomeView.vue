@@ -1,6 +1,5 @@
 <script setup>
-import HomeBanner from "@/components/HomeBanner.vue";
-import DownArrows from "@/components/DownArrows.vue";
+import { HomeBanner, DownArrows } from "@/components";
 </script>
 
 <template>

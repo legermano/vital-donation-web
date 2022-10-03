@@ -1,4 +1,4 @@
 export * from "./auth";
 export * from "./user";
-export * from "./alert";
+export * from "./notification";
 export * from "./validations";

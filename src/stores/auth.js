@@ -1,15 +1,15 @@
 import { defineStore } from "pinia";
 import { router } from "@/router";
-import { useAlertStore } from "@/stores";
+import { useNotificationStore } from "@/stores";
 
 export const useAuthStore = defineStore({
   id: "auth",
   state: () => ({
-    user: JSON.parse(localStorage.getItem("user")),
+    jwtToken: localStorage.getItem("jwtToken"),
     returnUrl: null,
   }),
   getters: {
-    isLoggedIn: (state) => !!state.user?.token,
+    isLoggedIn: (state) => !!state.jwtToken,
   },
   actions: {
     async login(cpf, password) {
@@ -25,21 +25,23 @@ export const useAuthStore = defineStore({
         };
 
         // Update pinia state
-        this.user = user;
+        this.jwtToken = user.token;
 
-        // Store user details and JWT in local storage to keep user logged in between page refreshes
-        localStorage.setItem("user", JSON.stringify(user));
+        // Store JWT token in local storage to keep user logged in between page refreshes
+        localStorage.setItem("jwtToken", user.token);
 
         // Redirect to previous URL or Default to home page
-        router.push(this.returnUrl || "/");
+        const returnUrl = this.returnUrl;
+        this.returnUrl = null;
+        router.push(returnUrl || "/");
       } catch (error) {
-        const alertStore = useAlertStore();
-        alertStore.error(error);
+        const notificationStore = useNotificationStore();
+        notificationStore.error("Ocoreu um erro", error.message);
       }
     },
     logout() {
       this.user = null;
-      localStorage.removeItem("user");
+      localStorage.removeItem("jwtToken");
       router.push("/account/login");
     },
   },

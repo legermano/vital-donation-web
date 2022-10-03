@@ -39,6 +39,7 @@ watch(
   <div class="field" :class="{ 'is-horizontal': horizontal }">
     <div
       v-if="showTitle"
+      class="mb-1"
       :class="{ 'field-label': horizontal, 'is-normal': horizontal }"
     >
       <label class="label">{{ title }}</label>
