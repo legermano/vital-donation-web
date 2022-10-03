@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { reactive } from "vue";
 import { storeToRefs } from "pinia";
 import {
