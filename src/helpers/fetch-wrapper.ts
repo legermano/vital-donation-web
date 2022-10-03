@@ -1,13 +1,6 @@
 import { useAuthStore } from "@/stores";
 
-export const fetchWrapper = {
-  get: request("GET"),
-  post: request("POST"),
-  put: request("PUT"),
-  delete: request("DELETE"),
-};
-
-const request = (method) => {
+const request = (method: string) => {
   return (url, body) => {
     const requestOptions = {
       method,
@@ -26,12 +19,12 @@ const request = (method) => {
 // Helper funcions
 
 // Returns auth header with JWT if user is logged in and request is to the api url
-const authHeader = (url) => {
-  const { user, isLoggedIn } = useAuthStore();
+const authHeader = (url: string) => {
+  const { isLoggedIn, auth } = useAuthStore();
   const isApiUrl = url.startsWith(import.meta.env.VITE_API_URL);
 
   if (isLoggedIn && isApiUrl) {
-    return { Authorization: `Bearer ${user.token}` };
+    return { Authorization: `Bearer ${auth?.access_token}` };
   }
 
   return {};
@@ -57,4 +50,11 @@ const handleResponse = async (response) => {
   }
 
   return data;
+};
+
+export const fetchWrapper = {
+  get: request("GET"),
+  post: request("POST"),
+  put: request("PUT"),
+  delete: request("DELETE"),
 };

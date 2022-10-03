@@ -5,13 +5,15 @@ import { CpfField, PasswordField } from "@/components/fields";
 import { useAuthStore, useFormValidationStore } from "@/stores";
 import { useEventBus } from "@/modules";
 
+interface Login {
+  cpf: string;
+  password: string;
+}
+
 const { login } = useAuthStore();
 const { emit } = useEventBus();
 const { hasErrors } = storeToRefs(useFormValidationStore());
-const user = reactive({
-  cpf: null,
-  password: null,
-});
+const loginInput: Login = reactive({ cpf: "", password: "" });
 
 const validateFields = async () => {
   emit("validateInput");
@@ -23,7 +25,7 @@ const onLogin = async () => {
   await validateFields();
 
   if (!hasErrors.value) {
-    login(user.cpf, user.password);
+    login(loginInput.cpf, loginInput.password);
   }
 };
 </script>
@@ -41,9 +43,9 @@ const onLogin = async () => {
           class="columns is-flex is-flex-direction-column box"
           @submit.prevent
         >
-          <CpfField v-model="user.cpf" :show-title="false" />
+          <CpfField v-model="loginInput.cpf" :show-title="false" />
           <PasswordField
-            v-model="user.password"
+            v-model="loginInput.password"
             :show-title="false"
             :validate-value="false"
           />

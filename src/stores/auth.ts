@@ -1,48 +1,50 @@
+import { ref, computed } from "vue";
 import { defineStore } from "pinia";
+import { useStorage } from "@vueuse/core";
 import { router } from "@/router";
 import { useNotificationStore } from "@/stores";
+import type { IAuth } from "@/interfaces";
 
-export const useAuthStore = defineStore({
-  id: "auth",
-  state: () => ({
-    jwtToken: localStorage.getItem("jwtToken"),
-    returnUrl: null,
-  }),
-  getters: {
-    isLoggedIn: (state) => !!state.jwtToken,
-  },
-  actions: {
-    async login(cpf, password) {
-      try {
-        // Call API
-        const user = {
-          id: 1,
-          name: "Lucas Germano",
-          cpf: cpf,
-          email: "lucas.germano@universo.univates.br",
-          password: password,
-          token: "JWT TOKEN",
-        };
+export const useAuthStore = defineStore("auth", () => {
+  // Store JWT token and refresh in local storage to keep user logged in between page refreshes
+  const auth = useStorage("auth", null as IAuth | null);
+  const returnUrl = ref<string | null>();
 
-        // Update pinia state
-        this.jwtToken = user.token;
+  const isLoggedIn = computed(() => !!auth.value?.access_token);
 
-        // Store JWT token in local storage to keep user logged in between page refreshes
-        localStorage.setItem("jwtToken", user.token);
+  async function login(cpf: string, password: string): Promise<void> {
+    try {
+      // TOD: Call API
+      const user = {
+        cpf: cpf,
+        password: password,
+      };
 
-        // Redirect to previous URL or Default to home page
-        const returnUrl = this.returnUrl;
-        this.returnUrl = null;
-        router.push(returnUrl || "/");
-      } catch (error) {
+      // Update pinia state
+      auth.value = { access_token: "aaa", refresh_token: "bbb" };
+
+      // Redirect to previous URL or Default to home page
+      const oldReturnUrl = returnUrl.value;
+      returnUrl.value = null;
+      router.push(oldReturnUrl || "/");
+    } catch (error) {
+      if (error instanceof Error) {
         const notificationStore = useNotificationStore();
         notificationStore.error("Ocoreu um erro", error.message);
       }
-    },
-    logout() {
-      this.user = null;
-      localStorage.removeItem("jwtToken");
-      router.push("/account/login");
-    },
-  },
+    }
+  }
+
+  function logout(): void {
+    auth.value = null;
+    router.push("/account/login");
+  }
+
+  return {
+    auth,
+    returnUrl,
+    isLoggedIn,
+    login,
+    logout,
+  };
 });

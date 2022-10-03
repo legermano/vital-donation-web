@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { reactive } from "vue";
 import { NameField, EmailField, CpfField } from "@/components/fields";
 import { router } from "@/router";
 
