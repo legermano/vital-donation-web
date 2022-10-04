@@ -119,10 +119,19 @@ a.navbar-item:hover {
 }
 
 .item-home {
-  background-color: hsl(348deg, 86%, 61%) !important;
+  @media screen and (min-width: 1024px) {
+    background-color: hsl(348deg, 86%, 61%) !important;
 
-  &:hover {
-    background-color: #ef2e55 !important;
+    &:hover {
+      background-color: #ef2e55 !important;
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    &[href="/"] {
+      background-color: hsl(348deg, 86%, 61%) !important;
+    }
+    color: hsl(0deg, 0%, 29%) !important;
   }
 }
 .name {

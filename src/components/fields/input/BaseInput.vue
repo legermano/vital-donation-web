@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
-import { toRef } from "vue";
+import { toRef, computed } from "vue";
+import { InteractionModes } from "@/modules";
 
 const props = defineProps({
   name: {
@@ -30,9 +31,42 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  mode: {
+    type: String,
+    default: "lazy",
+  },
 });
 
-const { value, errorMessage } = useField(toRef(props, "name"), undefined);
+const { meta, value, errorMessage, handleChange, handleBlur } = useField(
+  toRef(props, "name"),
+  undefined,
+  {
+    validateOnValueUpdate: false,
+  }
+);
+
+const handlers = computed(() => {
+  const on: Record<string, any> = {
+    blur: handleBlur,
+    // Default input event to sync the value 'false' here prevents validation
+    input: [(e: unknown) => handleChange(e, false)],
+  };
+
+  const triggers: string[] = InteractionModes[props.mode]({
+    errorMessage,
+    meta,
+  });
+
+  triggers.forEach((t) => {
+    if (Array.isArray(on[t])) {
+      on[t].push(handleChange);
+    } else {
+      on[t] = handleChange;
+    }
+  });
+
+  return on;
+});
 </script>
 
 <template>
@@ -60,6 +94,7 @@ const { value, errorMessage } = useField(toRef(props, "name"), undefined);
             :class="{ 'is-danger': errorMessage }"
             v-mask="mask"
             v-model="value"
+            v-on="handlers"
           />
           <span v-if="iconClass" class="icon is-small is-left">
             <i :class="iconClass"></i>
