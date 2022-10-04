@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { useStorage } from "@vueuse/core";
 import { router } from "@/router";
 import { useNotificationStore } from "@/stores";
+import axios from "axios";
 import type { IAuth } from "@/interfaces";
 
 export const useAuthStore = defineStore("auth", () => {
@@ -12,33 +13,35 @@ export const useAuthStore = defineStore("auth", () => {
 
   const isLoggedIn = computed(() => !!auth.value?.access_token);
 
-  async function login(cpf: string, password: string): Promise<void> {
-    try {
-      // TOD: Call API
-      const user = {
-        cpf: cpf,
-        password: password,
-      };
+  const login = async (cpf: string, password: string): Promise<void> => {
+    axios
+      .get("http://localhost:8080/login", {
+        data: {
+          login: cpf,
+          password,
+        },
+      })
+      .then(({ data }) => {
+        // Update pinia state
+        auth.value = data;
 
-      // Update pinia state
-      auth.value = { access_token: "aaa", refresh_token: "bbb" };
+        // Redirect to previous URL or Default to home page
+        const oldReturnUrl = returnUrl.value;
+        returnUrl.value = null;
+        router.push(oldReturnUrl || "/");
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          const notificationStore = useNotificationStore();
+          notificationStore.error("Ocoreu um erro", error.message);
+        }
+      });
+  };
 
-      // Redirect to previous URL or Default to home page
-      const oldReturnUrl = returnUrl.value;
-      returnUrl.value = null;
-      router.push(oldReturnUrl || "/");
-    } catch (error) {
-      if (error instanceof Error) {
-        const notificationStore = useNotificationStore();
-        notificationStore.error("Ocoreu um erro", error.message);
-      }
-    }
-  }
-
-  function logout(): void {
+  const logout = (): void => {
     auth.value = null;
     router.push("/account/login");
-  }
+  };
 
   return {
     auth,

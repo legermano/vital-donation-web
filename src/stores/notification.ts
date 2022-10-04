@@ -41,6 +41,10 @@ export const useNotificationStore = defineStore("notification", () => {
     notificate(title, text, NotificationType.DANGER);
   }
 
+  function info(title: string, text: string): void {
+    notificate(title, text, NotificationType.INFO);
+  }
+
   return {
     notifications,
     notificate,
@@ -48,5 +52,6 @@ export const useNotificationStore = defineStore("notification", () => {
     success,
     warning,
     error,
+    info,
   };
 });
