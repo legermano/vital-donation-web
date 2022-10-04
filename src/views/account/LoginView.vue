@@ -1,31 +1,20 @@
-<script setup>
-import { reactive } from "vue";
-import { storeToRefs } from "pinia";
-import { CpfField, PasswordField } from "@/components/fields";
-import { useAuthStore, useFormValidationStore } from "@/stores";
-import { useEventBus } from "@/modules";
+<script setup lang="ts">
+import { useAuthStore } from "@/stores";
+import { Form } from "vee-validate";
+import { CPFInput, PasswordInput } from "@/components/fields";
+import { yup } from "@/modules";
 
 const { login } = useAuthStore();
-const { emit } = useEventBus();
-const { hasErrors } = storeToRefs(useFormValidationStore());
-const user = reactive({
-  cpf: null,
-  password: null,
+
+// TODO: Use correct type ?
+const onSubmit = (values: Record<string, any>) => {
+  login(values.cpf, values.password);
+};
+
+const schema = yup.object({
+  cpf: yup.string().cpf().required().label("CPF"),
+  password: yup.string().required().label("senha"),
 });
-
-const validateFields = async () => {
-  emit("validateInput");
-  // Since the listining part is asyncronous, needs to await a little to proceed
-  await new Promise((r) => setTimeout(r, 1000));
-};
-
-const onLogin = async () => {
-  await validateFields();
-
-  if (!hasErrors.value) {
-    login(user.cpf, user.password);
-  }
-};
 </script>
 
 <template>
@@ -37,22 +26,19 @@ const onLogin = async () => {
         <p class="subtitle has-text-centered">
           Realize o login para ter acesso ao sistema
         </p>
-        <form
+        <Form
           class="columns is-flex is-flex-direction-column box"
-          @submit.prevent
+          :validation-schema="schema"
+          @submit="onSubmit"
         >
-          <CpfField v-model="user.cpf" :show-title="false" />
-          <PasswordField
-            v-model="user.password"
-            :show-title="false"
-            :validate-value="false"
-          />
+          <CPFInput name="cpf" :show-title="false" />
+          <PasswordInput name="password" :show-title="false" />
           <div class="has-text-right" style="margin-bottom: 0.75rem">
             Ainda não possui uma conta?
             <RouterLink to="register"> Crie uma nova </RouterLink>
           </div>
-          <button @click="onLogin" class="button is-danger">Entrar</button>
-        </form>
+          <button class="button is-danger" type="submit">Entrar</button>
+        </Form>
       </div>
     </div>
   </div>

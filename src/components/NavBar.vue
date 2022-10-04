@@ -1,10 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 import { storeToRefs } from "pinia";
-import { useAuthStore } from "@/stores";
+import { useAuthStore, useUserStore } from "@/stores";
 
-const { isLoggedIn, user } = storeToRefs(useAuthStore());
+const { isLoggedIn } = storeToRefs(useAuthStore());
+const { user } = storeToRefs(useUserStore());
 const showBurger = ref(false);
 const toogleBurger = () => (showBurger.value = !showBurger.value);
 const closeBurger = () => (showBurger.value = false);
@@ -80,10 +81,10 @@ const logout = () => {
             <figure class="image">
               <img
                 class="is-rounded"
-                :src="`https://ui-avatars.com/api/?name=${user.name}`"
+                :src="`https://ui-avatars.com/api/?name=${user?.name}`"
               />
             </figure>
-            <div class="name">{{ user.name }}</div>
+            <div class="name">{{ user?.name }}</div>
           </a>
           <div class="navbar-dropdown">
             <RouterLink

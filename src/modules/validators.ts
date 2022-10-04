@@ -1,31 +1,5 @@
 export default function useValidators() {
-  const isEmpty = (fieldName, fieldValue) => {
-    return !fieldValue ? `O campo ${fieldName} é obrigatório` : "";
-  };
-
-  const minLength = (fieldName, fieldValue, min) => {
-    return fieldValue.length < min
-      ? `O campo ${fieldName} precisa ter pelo menos ${min} caracteres`
-      : "";
-  };
-
-  const isEmail = (fieldName, fieldValue) => {
-    let regex =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return !regex.test(fieldValue) ? `O ${fieldName} digitado é inválido` : "";
-  };
-
-  const isCPF = (fieldName, fieldValue) => {
-    return !validateCPF(fieldValue) ? `O ${fieldName} digitado é inválido` : "";
-  };
-
-  const isPassword = (fieldName, fieldValue) => {
-    return !validatePassword(fieldValue)
-      ? `A ${fieldName} deve ter pelo menos 10 caracteres contendo pelo menos 1 letra maiúscula, 1 minúscula, 1 número e um simbolo especial (!@#$%^&*)`
-      : "";
-  };
-
-  const validateCPF = (cpf) => {
+  const validateCPF = (cpf: string): boolean => {
     let add = 0;
     let rev = 0;
     // Remove non-numeric characters
@@ -86,7 +60,7 @@ export default function useValidators() {
     return true;
   };
 
-  const validatePassword = (pass) => {
+  const validatePassword = (pass: string): boolean => {
     // Validate minimun length
     if (pass.length < 10) {
       return false;
@@ -99,11 +73,13 @@ export default function useValidators() {
      * - 1 number
      * - 1 special character
      */
-    let regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)/;
+    const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)/;
     if (!regex.test(pass)) {
       return false;
     }
+
+    return true;
   };
 
-  return { isEmpty, minLength, isEmail, isCPF, isPassword };
+  return { validateCPF, validatePassword };
 }
