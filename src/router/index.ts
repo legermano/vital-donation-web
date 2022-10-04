@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore, useFormValidationStore } from "@/stores";
+import { useAuthStore } from "@/stores";
 import { HomeView } from "@/views";
 import accountRoutes from "./account.routes";
 
@@ -42,10 +42,6 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  // Clear form validation on route change
-  const formValidationStore = useFormValidationStore();
-  formValidationStore.clear();
-
   // Redirect to login page if not logged in and trying to access restricted page
   const publicPages = ["/", "/account/login", "/account/register"];
   const authRequired = !publicPages.includes(to.path);

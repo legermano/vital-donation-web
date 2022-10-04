@@ -3,6 +3,10 @@ import { useField } from "vee-validate";
 import { toRef } from "vue";
 
 const props = defineProps({
+  name: {
+    type: String,
+    required: true,
+  },
   horizontal: {
     type: Boolean,
     default: false,
@@ -15,10 +19,6 @@ const props = defineProps({
     type: String,
     default: "Input",
   },
-  name: {
-    type: String,
-    required: true,
-  },
   iconClass: {
     type: String,
   },
@@ -26,12 +26,13 @@ const props = defineProps({
     type: String,
     default: "text",
   },
+  mask: {
+    type: String,
+    default: "",
+  },
 });
 
-const { value, errors, errorMessage } = useField(
-  toRef(props, "name"),
-  undefined
-);
+const { value, errorMessage } = useField(toRef(props, "name"), undefined);
 </script>
 
 <template>
@@ -57,6 +58,7 @@ const { value, errors, errorMessage } = useField(
             :type="type"
             :placeholder="title"
             :class="{ 'is-danger': errorMessage }"
+            v-mask="mask"
             v-model="value"
           />
           <span v-if="iconClass" class="icon is-small is-left">

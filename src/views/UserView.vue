@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NameField, EmailField, CpfField } from "@/components/fields";
+import {} from "@/components/fields";
 import { router } from "@/router";
 
 // const user = reactive({

@@ -1,36 +1,22 @@
 <script setup lang="ts">
-import { reactive } from "vue";
-import { storeToRefs } from "pinia";
 import {
-  CpfField,
-  PasswordField,
-  NameField,
-  EmailField,
+  CPFInput,
+  PasswordInput,
+  NameInput,
+  EmailInput,
 } from "@/components/fields";
-import { useEventBus } from "@/modules";
-import { useFormValidationStore } from "@/stores";
+import { Form } from "vee-validate";
+import { yup } from "@/modules";
 
-const { emit } = useEventBus();
-const { hasErrors } = storeToRefs(useFormValidationStore());
-const user = reactive({
-  name: null,
-  email: null,
-  cpf: null,
-  password: null,
+const schema = yup.object({
+  name: yup.string().required().min(4).label("nome"),
+  email: yup.string().required().email(),
+  cpf: yup.string().required().cpf().label("CPF"),
+  password: yup.string().required().password().label("senha"),
 });
 
-const validateFields = async () => {
-  emit("validateInput");
-  // Since the listining part is asyncronous, needs to await a little to proceed
-  await new Promise((r) => setTimeout(r, 1000));
-};
-
-const onLogin = async () => {
-  await validateFields();
-
-  if (!hasErrors.value) {
-    // TODO: Register logic
-  }
+const onSubmit = (values: Record<string, any>) => {
+  console.log("register", values);
 };
 </script>
 
@@ -43,26 +29,27 @@ const onLogin = async () => {
         <p class="subtitle has-text-centered">
           Crie uma conta para poder acessar o sistema
         </p>
-        <form
+        <Form
           class="columns is-flex is-flex-direction-column box"
-          @submit.prevent
+          :validation-schema="schema"
+          @submit="onSubmit"
         >
-          <NameField v-model="user.name" :show-title="false" />
-          <EmailField v-model="user.email" :show-title="false" />
-          <CpfField v-model="user.cpf" :show-title="false" />
-          <PasswordField v-model="user.password" :show-title="false" />
+          <NameInput name="name" :show-title="false" />
+          <EmailInput name="email" :show-title="false" />
+          <CPFInput name="cpf" :show-title="false" />
+          <PasswordInput name="password" :show-title="false" />
           <div class="has-text-right" style="margin-bottom: 0.75rem">
             Já possui uma conta?
             <RouterLink to="login"> Faça o login </RouterLink>
           </div>
           <button
-            @click="onLogin"
             class="button is-danger"
             style="margin-bottom: 0.75rem"
+            type="submit"
           >
             Registrar
           </button>
-        </form>
+        </Form>
       </div>
     </div>
   </div>

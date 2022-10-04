@@ -1,5 +1,5 @@
-export { default as BaseFiled } from "./BaseField.vue";
-export { default as CpfField } from "./CpfField.vue";
-export { default as EmailField } from "./EmailField.vue";
-export { default as NameField } from "./NameField.vue";
-export { default as PasswordField } from "./PasswordField.vue";
+export { default as BaseInput } from "./input/BaseInput.vue";
+export { default as CPFInput } from "./input/CPFInput.vue";
+export { default as EmailInput } from "./input/EmailInput.vue";
+export { default as NameInput } from "./input/NameInput.vue";
+export { default as PasswordInput } from "./input/PasswordInput.vue";
