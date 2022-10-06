@@ -2,17 +2,16 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { useStorage } from "@vueuse/core";
 import { router } from "@/router";
-import { useNotificationStore } from "@/stores";
+import { useNotificationStore, useUserStore } from "@/stores";
 import axios, { AxiosError } from "axios";
 import type { IAuth } from "@/interfaces";
 
 export const useAuthStore = defineStore("auth", () => {
   // Store JWT token and refresh in local storage to keep user logged in between page refreshes
-  // TODO: Verify why does not store correctly on reload
-  const auth = useStorage("auth", null as IAuth | null);
+  const auth = useStorage<IAuth>("auth", {} as IAuth);
   const returnUrl = ref<string | null>();
 
-  const isLoggedIn = computed(() => !!auth.value?.access_token);
+  const isLoggedIn = computed(() => !!auth.value.access_token);
 
   const login = async (cpf: string, password: string): Promise<void> => {
     const data = new FormData();
@@ -26,6 +25,7 @@ export const useAuthStore = defineStore("auth", () => {
         },
       })
       .then(({ data }) => {
+        useUserStore().getUserInfo();
         // Update pinia state
         auth.value = data;
 
