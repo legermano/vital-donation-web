@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import {} from "@/components/fields";
+import { NameInput, EmailInput, CPFInput } from "@/components/fields";
 import { router } from "@/router";
+import { useUserStore } from "@/stores";
 
-// const user = reactive({
-//   name: ,
-//   email: ,
-//   cpf :,
-
-// })
+const { user } = useUserStore();
 </script>
 
 <template>
@@ -19,9 +15,9 @@ import { router } from "@/router";
         @submit.prevent
         class="columns is-flex is-flex-direction-column box"
       >
-        <NameField />
-        <EmailField />
-        <CpfField />
+        <NameInput name="name" :initial-value="user?.name" />
+        <EmailInput name="email" :initial-value="user?.email" />
+        <CPFInput name="cpf" :initial-value="user?.cpf" />
         <hr class="hr" />
         <div class="buttons">
           <button class="button is-danger">Salvar</button>

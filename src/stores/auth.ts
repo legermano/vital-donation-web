@@ -8,10 +8,10 @@ import type { IAuth } from "@/interfaces";
 
 export const useAuthStore = defineStore("auth", () => {
   // Store JWT token and refresh in local storage to keep user logged in between page refreshes
-  const auth = useStorage<IAuth>("auth", {} as IAuth);
+  const auth = useStorage<IAuth | null>("auth", {} as IAuth);
   const returnUrl = ref<string | null>();
 
-  const isLoggedIn = computed(() => !!auth.value.access_token);
+  const isLoggedIn = computed(() => !!auth.value?.access_token);
 
   const login = async (cpf: string, password: string): Promise<void> => {
     const data = new FormData();
@@ -54,6 +54,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = (): void => {
     auth.value = null;
+    useUserStore().cleanUserInfo();
     router.push("/account/login");
   };
 

@@ -1,40 +1,19 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
-import { toRef, computed } from "vue";
+import { toRef, computed, ref } from "vue";
 import { InteractionModes } from "@/modules";
+// Needs to import directly from the file,because namespace is not supported by vite-plugin-vue-type-imports
+import type { IBaseInput } from "@/interfaces/IBaseInput";
+import { InteractionMode } from "@/types";
 
-const props = defineProps({
-  name: {
-    type: String,
-    required: true,
-  },
-  horizontal: {
-    type: Boolean,
-    default: false,
-  },
-  showTitle: {
-    type: Boolean,
-    default: true,
-  },
-  title: {
-    type: String,
-    default: "Input",
-  },
-  iconClass: {
-    type: String,
-  },
-  type: {
-    type: String,
-    default: "text",
-  },
-  mask: {
-    type: String,
-    default: "",
-  },
-  mode: {
-    type: String,
-    default: "lazy",
-  },
+const props = withDefaults(defineProps<IBaseInput>(), {
+  horizontal: false,
+  showTitle: true,
+  title: "Input",
+  type: "text",
+  mask: "",
+  mode: InteractionMode.LAZY,
+  initialValue: "",
 });
 
 const { meta, value, errorMessage, handleChange, handleBlur } = useField(
@@ -67,6 +46,8 @@ const handlers = computed(() => {
 
   return on;
 });
+
+value.value = ref(props.initialValue).value;
 </script>
 
 <template>

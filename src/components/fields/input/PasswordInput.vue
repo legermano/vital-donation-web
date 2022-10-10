@@ -1,23 +1,13 @@
 <script setup lang="ts">
+// Needs to import directly from the file,because namespace is not supported by vite-plugin-vue-type-imports
+import type { IBaseInput } from "@/interfaces/IBaseInput";
 import BaseInput from "./BaseInput.vue";
 
-defineProps({
-  name: {
-    type: String,
-    required: true,
-  },
-  horizontal: {
-    type: Boolean,
-    default: false,
-  },
-  showTitle: {
-    type: Boolean,
-    default: true,
-  },
-  title: {
-    type: String,
-    default: "Senha",
-  },
+withDefaults(defineProps<IBaseInput>(), {
+  horizontal: false,
+  showTitle: true,
+  title: "Senha",
+  initialValue: "",
 });
 </script>
 
@@ -27,6 +17,7 @@ defineProps({
     :horizontal="horizontal"
     :showTitle="showTitle"
     :title="title"
+    :initialValue="initialValue"
     iconClass="fas fa-lock"
     type="password"
   />

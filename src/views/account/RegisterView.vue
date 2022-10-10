@@ -7,7 +7,9 @@ import {
 } from "@/components/fields";
 import { Form } from "vee-validate";
 import { yup } from "@/modules";
+import { useUserStore } from "@/stores";
 
+const { createUser } = useUserStore();
 const schema = yup.object({
   name: yup.string().required().min(4).label("nome"),
   email: yup.string().required().email(),
@@ -15,9 +17,8 @@ const schema = yup.object({
   password: yup.string().required().password().label("senha"),
 });
 
-const onSubmit = (values: Record<string, any>) => {
-  console.log("register", values);
-};
+const onSubmit = (values: Record<string, any>): void =>
+  createUser(values.name, values.cpf, values.email, values.password);
 </script>
 
 <template>

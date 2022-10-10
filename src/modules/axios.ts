@@ -5,12 +5,15 @@ import type { AxiosRequestConfig } from "axios";
 
 const axios = coreAxios.create({
   baseURL: "/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 axios.interceptors.request.use((config: AxiosRequestConfig) => {
-  if (config.headers != undefined) {
-    const { auth } = storeToRefs(useAuthStore());
-    config.headers.Authorization = `Bearer ${auth.value.access_token}`;
+  const { auth, isLoggedIn } = storeToRefs(useAuthStore());
+  if (config.headers != undefined && isLoggedIn) {
+    config.headers.Authorization = `Bearer ${auth.value?.access_token}`;
   }
 
   return config;
