@@ -15,10 +15,10 @@ withDefaults(defineProps<IBaseInput>(), {
   <BaseInput
     :name="name"
     :horizontal="horizontal"
-    :showTitle="showTitle"
+    :show-title="showTitle"
     :title="title"
-    :initialValue="initialValue"
-    iconClass="fas fa-id-card"
+    :initial-value="initialValue"
+    icon-class="fas fa-id-card"
     mask="###.###.###-##"
   />
 </template>

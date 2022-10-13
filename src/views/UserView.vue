@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { NameInput, EmailInput, CPFInput } from "@/components/fields";
+import {
+  NameInput,
+  EmailInput,
+  CPFInput,
+  DatePicker,
+} from "@/components/fields";
 import { router } from "@/router";
 import { useUserStore } from "@/stores";
 
-const { user } = useUserStore();
+const { user, formattedBirthDate } = useUserStore();
 </script>
 
 <template>
@@ -17,7 +22,14 @@ const { user } = useUserStore();
       >
         <NameInput name="name" :initial-value="user?.name" />
         <EmailInput name="email" :initial-value="user?.email" />
-        <CPFInput name="cpf" :initial-value="user?.cpf" />
+        <div class="field-body">
+          <CPFInput name="cpf" :initial-value="user?.cpf" />
+          <DatePicker
+            name="date"
+            title="Data de nascimento"
+            :initial-value="formattedBirthDate"
+          />
+        </div>
         <hr class="hr" />
         <div class="buttons">
           <button class="button is-danger">Salvar</button>

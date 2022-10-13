@@ -4,10 +4,23 @@ import { axios } from "@/modules";
 import { router } from "@/router";
 import { AxiosError } from "axios";
 import { useNotificationStore } from "@/stores";
+import { computed } from "vue";
+import moment from "moment";
+import "moment/locale/pt-br";
 import type { IUser } from "@/interfaces";
+
+moment.locale("pt-br");
 
 export const useUserStore = defineStore("user", () => {
   const user = useStorage<IUser | null>("user", {} as IUser);
+
+  const formattedBirthDate = computed(() => {
+    if (user.value?.birthdate == null) {
+      return "";
+    }
+
+    return moment(user.value.birthdate, "YYYY-MM-DD").format("DD/MM/YYYY");
+  });
 
   const createUser = (
     name: string,
@@ -54,6 +67,7 @@ export const useUserStore = defineStore("user", () => {
 
   return {
     user,
+    formattedBirthDate,
     createUser,
     getUserInfo,
     cleanUserInfo,

@@ -68,15 +68,21 @@ value.value = ref(props.initialValue).value;
             'has-icons-right': errorMessage,
           }"
         >
-          <input
-            class="input"
-            :type="type"
-            :placeholder="title"
-            :class="{ 'is-danger': errorMessage }"
-            v-mask="mask"
-            v-model="value"
-            v-on="handlers"
-          />
+          <slot
+            :value="value"
+            :handlers="handlers"
+            :errorMessage="errorMessage"
+          >
+            <input
+              class="input"
+              :type="type"
+              :placeholder="title"
+              :class="{ 'is-danger': errorMessage }"
+              v-mask="mask"
+              v-model="value"
+              v-on="handlers"
+            />
+          </slot>
           <span v-if="iconClass" class="icon is-small is-left">
             <i :class="iconClass"></i>
           </span>

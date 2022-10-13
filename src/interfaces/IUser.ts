@@ -1,5 +1,6 @@
 import type IRole from "./IRole";
 import type { BloodType } from "@/types";
+import type moment from "moment";
 
 export default interface IUser {
   id: string;
@@ -11,7 +12,7 @@ export default interface IUser {
   complement?: string;
   weight?: number;
   height?: number;
-  birthdate?: Date;
+  birthdate?: moment.Moment;
   bloodType?: BloodType;
   roles?: Array<IRole>;
 }
