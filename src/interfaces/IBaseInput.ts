@@ -5,9 +5,11 @@ export interface IBaseInput {
   horizontal?: boolean;
   showTitle?: boolean;
   title?: string;
+  isExpanded?: boolean;
+  isNarrow?: boolean;
   iconClass?: string;
   type?: string;
-  mask?: string;
+  mask?: string | Function;
   mode?: InteractionMode;
-  initialValue?: string | number;
+  initialValue?: string | number | null;
 }

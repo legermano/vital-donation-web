@@ -6,7 +6,11 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "lib": [
+      "ES2017",
+      "DOM"
+    ]
   },
 
   "references": [

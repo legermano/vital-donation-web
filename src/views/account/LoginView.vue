@@ -2,19 +2,19 @@
 import { useAuthStore } from "@/stores";
 import { Form } from "vee-validate";
 import { CPFInput, PasswordInput } from "@/components/fields";
-import { yup } from "@/modules";
+import { yup, useSchemas } from "@/modules";
 
 const { login } = useAuthStore();
+const { cpf, requiredString } = useSchemas();
 
-// TODO: Use correct type ?
+const schema = yup.object({
+  cpf: cpf.label("CPF"),
+  password: requiredString.label("senha"),
+});
+
 const onSubmit = (values: Record<string, any>) => {
   login(values.cpf, values.password);
 };
-
-const schema = yup.object({
-  cpf: yup.string().cpf().required().label("CPF"),
-  password: yup.string().required().label("senha"),
-});
 </script>
 
 <template>

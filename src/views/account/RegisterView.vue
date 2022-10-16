@@ -6,15 +6,16 @@ import {
   EmailInput,
 } from "@/components/fields";
 import { Form } from "vee-validate";
-import { yup } from "@/modules";
+import { yup, useSchemas } from "@/modules";
 import { useUserStore } from "@/stores";
 
 const { createUser } = useUserStore();
+const { name, email, cpf, password } = useSchemas();
 const schema = yup.object({
-  name: yup.string().required().min(4).label("nome"),
-  email: yup.string().required().email(),
-  cpf: yup.string().required().cpf().label("CPF"),
-  password: yup.string().required().password().label("senha"),
+  name: name.label("nome"),
+  email: email,
+  cpf: cpf.label("CPF"),
+  password: password.label("senha"),
 });
 
 const onSubmit = (values: Record<string, any>): void =>

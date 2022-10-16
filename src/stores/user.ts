@@ -15,11 +15,21 @@ export const useUserStore = defineStore("user", () => {
   const user = useStorage<IUser | null>("user", {} as IUser);
 
   const formattedBirthDate = computed(() => {
-    if (user.value?.birthdate == null) {
-      return "";
-    }
+    if (user.value?.birthdate == null) return null;
 
     return moment(user.value.birthdate, "YYYY-MM-DD").format("DD/MM/YYYY");
+  });
+
+  const weightInKilos = computed(() => {
+    if (user.value?.weight == null) return;
+
+    return (user.value.weight / 1000).toFixed(2);
+  });
+
+  const heightInMeters = computed(() => {
+    if (user.value?.height == null) return;
+
+    return (user.value.height / 100).toFixed(2);
   });
 
   const createUser = (
@@ -57,6 +67,38 @@ export const useUserStore = defineStore("user", () => {
       });
   };
 
+  const updateUser = (user: IUser): void => {
+    console.log(user);
+    axios
+      .put(`/users/${user.id}`, user)
+      .then(() => {
+        useNotificationStore().success(
+          "Dados atualizados!",
+          "Dados atualizados com sucesso!"
+        );
+
+        getUserInfo();
+      })
+      .catch((error) => {
+        const notificationStore = useNotificationStore();
+
+        if (
+          error instanceof AxiosError &&
+          error.response?.status == 404 &&
+          error.message.includes("user not found")
+        ) {
+          notificationStore.error(
+            "Usuário não encontrado",
+            "Não foi possível encontrar o usuário para atualizar os dados. Tente relogar na aplicação!"
+          );
+
+          return;
+        }
+
+        notificationStore.error("Error ao atualizar dados", error.message);
+      });
+  };
+
   const getUserInfo = () => {
     axios.get("/users").then(({ data }) => {
       user.value = data;
@@ -68,8 +110,11 @@ export const useUserStore = defineStore("user", () => {
   return {
     user,
     formattedBirthDate,
+    weightInKilos,
+    heightInMeters,
     createUser,
     getUserInfo,
     cleanUserInfo,
+    updateUser,
   };
 });

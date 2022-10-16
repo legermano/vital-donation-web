@@ -1,21 +1,22 @@
 <script setup lang="ts">
-// Needs to import directly from the file,because namespace is not supported by vite-plugin-vue-type-imports
 import flatPickr from "vue-flatpickr-component";
 import { BaseInput } from "@/components/fields";
 import { Portuguese } from "flatpickr/dist/l10n/pt";
-import type { IBaseInput } from "@/interfaces/IBaseInput";
+// Needs to import directly from the file,because namespace is not supported by vite-plugin-vue-type-imports
+import type { IBaseDate } from "@/interfaces/IBaseDate";
 
-const props = withDefaults(defineProps<IBaseInput>(), {
+const props = withDefaults(defineProps<IBaseDate>(), {
   horizontal: false,
   showTitle: true,
   title: "Data",
-  initialValue: "",
+  allowInput: true,
 });
 
 const config = {
   dateFormat: "d/m/Y",
   locale: Portuguese,
   defaultDate: props.initialValue,
+  allowInput: props.allowInput,
 };
 </script>
 
@@ -25,17 +26,19 @@ const config = {
     :horizontal="horizontal"
     :showTitle="showTitle"
     :title="title"
+    :initial-value="initialValue"
     iconClass="fa-regular fa-calendar-days"
-    v-slot="{ value, handlers, errorMessage }"
   >
-    <flat-pickr
-      class="input"
-      type="date"
-      :placeholder="title"
-      :class="{ 'is-danger': errorMessage }"
-      :model-value="value"
-      :config="config"
-      v-on="handlers"
-    />
+    <template #field="{ value, handlers, errorMessage }">
+      <flat-pickr
+        class="input"
+        type="date"
+        :placeholder="title"
+        :class="{ 'is-danger': errorMessage }"
+        :model-value="value"
+        :config="config"
+        v-on="handlers"
+      />
+    </template>
   </BaseInput>
 </template>

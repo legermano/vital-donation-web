@@ -1,19 +1,23 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
-import { toRef, computed, ref } from "vue";
+import { toRef, computed, useSlots } from "vue";
 import { InteractionModes } from "@/modules";
 // Needs to import directly from the file,because namespace is not supported by vite-plugin-vue-type-imports
 import type { IBaseInput } from "@/interfaces/IBaseInput";
 import { InteractionMode } from "@/types";
 
+defineEmits(["update:modelValue"]);
+
+const slots = useSlots();
 const props = withDefaults(defineProps<IBaseInput>(), {
   horizontal: false,
   showTitle: true,
   title: "Input",
+  isExpanded: true,
+  isNarrow: false,
   type: "text",
   mask: "",
   mode: InteractionMode.LAZY,
-  initialValue: "",
 });
 
 const { meta, value, errorMessage, handleChange, handleBlur } = useField(
@@ -21,6 +25,7 @@ const { meta, value, errorMessage, handleChange, handleBlur } = useField(
   undefined,
   {
     validateOnValueUpdate: false,
+    initialValue: props.initialValue,
   }
 );
 
@@ -46,12 +51,13 @@ const handlers = computed(() => {
 
   return on;
 });
-
-value.value = ref(props.initialValue).value;
 </script>
 
 <template>
-  <div class="field" :class="{ 'is-horizontal': horizontal }">
+  <div
+    class="field"
+    :class="{ 'is-horizontal': horizontal, 'is-narrow': isNarrow }"
+  >
     <div
       v-if="showTitle"
       class="mb-1"
@@ -60,15 +66,23 @@ value.value = ref(props.initialValue).value;
       <label class="label">{{ title }}</label>
     </div>
     <div class="field-body">
-      <div class="field">
+      <div
+        class="field"
+        :class="{ 'has-addons': slots.leftAddon || slots.rightAddon }"
+      >
+        <p class="control" v-if="slots.leftAddon">
+          <slot name="leftAddon"></slot>
+        </p>
         <div
           class="control"
           :class="{
             'has-icons-left': iconClass,
             'has-icons-right': errorMessage,
+            'is-expanded': isExpanded,
           }"
         >
           <slot
+            name="field"
             :value="value"
             :handlers="handlers"
             :errorMessage="errorMessage"
@@ -78,8 +92,14 @@ value.value = ref(props.initialValue).value;
               :type="type"
               :placeholder="title"
               :class="{ 'is-danger': errorMessage }"
+              :value="value"
               v-mask="mask"
-              v-model="value"
+              @input="
+                $emit(
+                  'update:modelValue',
+                  ($event.target as HTMLTextAreaElement).value
+                )
+              "
               v-on="handlers"
             />
           </slot>
@@ -90,6 +110,9 @@ value.value = ref(props.initialValue).value;
             <i class="fas fa-exclamation-triangle"></i>
           </span>
         </div>
+        <p class="control" v-if="slots.rightAddon">
+          <slot name="rightAddon"></slot>
+        </p>
         <p v-if="errorMessage" class="help is-danger">{{ errorMessage }}</p>
       </div>
     </div>

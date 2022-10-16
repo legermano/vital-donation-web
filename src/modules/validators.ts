@@ -81,5 +81,17 @@ export default function useValidators() {
     return true;
   };
 
-  return { validateCPF, validatePassword };
+  const validateCellphone = (cellphone: string): boolean => {
+    // Remove non-numeric characters
+    cellphone = cellphone.replace(/[^\d]+/g, "");
+
+    const regex = /^\s*(\d{2}|\d{0})[-. ]?(\d{5}|\d{4})[-. ]?(\d{4})[-. ]?\s*$/;
+    if (!regex.test(cellphone)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  return { validateCPF, validatePassword, validateCellphone };
 }
