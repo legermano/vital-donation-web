@@ -1,3 +1,5 @@
+import { BloodType } from "@/types";
+
 export default function useValidators() {
   const validateCPF = (cpf: string): boolean => {
     let add = 0;
@@ -81,7 +83,7 @@ export default function useValidators() {
     return true;
   };
 
-  const validateCellphone = (cellphone: string): boolean => {
+  const validatePhone = (cellphone: string): boolean => {
     // Remove non-numeric characters
     cellphone = cellphone.replace(/[^\d]+/g, "");
 
@@ -93,5 +95,14 @@ export default function useValidators() {
     return true;
   };
 
-  return { validateCPF, validatePassword, validateCellphone };
+  const validateBloodType = (bloodType: string): boolean => {
+    return bloodType in BloodType;
+  };
+
+  return {
+    validateCPF,
+    validatePassword,
+    validatePhone,
+    validateBloodType,
+  };
 }

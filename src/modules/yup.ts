@@ -1,9 +1,11 @@
+import { Constants } from "@/types";
 import moment from "moment";
 import * as yup from "yup";
 import type { AnyObject, Maybe } from "yup/lib/types";
 import useValidators from "./validators";
 
-const { validateCPF, validatePassword, validateCellphone } = useValidators();
+const { validateCPF, validatePassword, validatePhone, validateBloodType } =
+  useValidators();
 
 const formatDate = (date: string | Date, format: string) => {
   return moment(date).format(format);
@@ -16,15 +18,16 @@ yup.setLocale({
   },
   string: {
     min: "O campo ${path} precisar ter pelo menos ${min} caracteres",
+    max: "O campo ${path} deve ter no máximo ${max} caracteres",
     email: "Email inválido",
   },
   date: {
     min: ({ min, path }) => {
-      const formattedDate = formatDate(min, "DD/MM/YYYY");
+      const formattedDate = formatDate(min, Constants.frontendDateFormat);
       return `${path} deve ser depois de ${formattedDate}`;
     },
     max: ({ max, path }) => {
-      const formattedDate = formatDate(max, "DD/MM/YYYY");
+      const formattedDate = formatDate(max, Constants.frontendDateFormat);
       return `${path} deve ser antes de ${formattedDate}`;
     },
   },
@@ -60,15 +63,33 @@ yup.addMethod<yup.StringSchema>(
 
 yup.addMethod<yup.StringSchema>(
   yup.string,
-  "cellphone",
+  "phone",
   function (message?: string) {
-    const msg = message ?? "Número de celular inválido";
-    return this.test("cellphone", msg, function (cellphone) {
-      if (cellphone === undefined) {
+    const msg = message ?? "Número de telefone inválido";
+    return this.test("phone", msg, function (phone) {
+      if (phone === undefined) {
         return true;
       }
 
-      return validateCellphone(cellphone);
+      return validatePhone(phone);
+    });
+  }
+);
+
+yup.addMethod<yup.StringSchema>(
+  yup.string,
+  "bloodtype",
+  function (message?: string) {
+    const msg = message ?? "Tipo sanguíneo inválido";
+    return this.test("bloodtype", msg, function (bloodtype) {
+      if (
+        bloodtype === undefined ||
+        bloodtype == Constants.bloodTypeDefaultOption
+      ) {
+        return true;
+      }
+
+      return validateBloodType(bloodtype);
     });
   }
 );
@@ -78,7 +99,7 @@ yup.addMethod<yup.DateSchema>(
   "format",
   function (formats: string, parseStrict: boolean = true) {
     return this.transform((value, originalValue, ctx) => {
-      if (value == undefined) return true;
+      if (value == undefined) return null;
 
       if (ctx.isType(value)) return value;
 
@@ -97,7 +118,8 @@ declare module "yup" {
   > extends yup.BaseSchema<TType, TContext, TOut> {
     cpf(message?: string): StringSchema<TType, TContext>;
     password(message?: string): StringSchema<TType, TContext>;
-    cellphone(message?: string): StringSchema<TType, TContext>;
+    phone(message?: string): StringSchema<TType, TContext>;
+    bloodtype(message?: string): StringSchema<TType, TContext>;
   }
 
   interface DateSchema<

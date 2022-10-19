@@ -23,7 +23,7 @@ export const router = createRouter({
     {
       path: "/user/edit",
       name: "user",
-      component: () => import("@/views/UserView.vue"),
+      component: () => import("@/views/EditUserView.vue"),
     },
     { ...accountRoutes },
   ],

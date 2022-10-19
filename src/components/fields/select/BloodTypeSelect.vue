@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import BaseSelect from "./BaseSelect.vue";
+import { BloodType, Constants } from "@/types";
 import type { IBaseSelect } from "@/interfaces/IBaseSelection";
-import { BloodType } from "@/types";
 
 withDefaults(defineProps<IBaseSelect>(), {
   horizontal: false,
   showTitle: true,
-  title: "Selecione o tipo sanguineo",
+  title: Constants.bloodTypeDefaultOption,
   useDefaultOption: true,
-  defaultOption: "Selecione o tipo sanguineo",
+  defaultOption: Constants.bloodTypeDefaultOption,
 });
 
 const selectOptions = Object.values(BloodType);

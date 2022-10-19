@@ -11,8 +11,7 @@ const toogleBurger = () => (showBurger.value = !showBurger.value);
 const closeBurger = () => (showBurger.value = false);
 const logout = () => {
   closeBurger();
-  const { logout } = useAuthStore();
-  logout();
+  useAuthStore().logout();
 };
 </script>
 

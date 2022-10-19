@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import moment from "moment";
 import { useForm } from "vee-validate";
 import {
   NameInput,
@@ -14,8 +13,9 @@ import {
 import { yup, useSchemas } from "@/modules";
 import { router } from "@/router";
 import { useUserStore } from "@/stores";
-import type { BloodType } from "@/types";
 import { storeToRefs } from "pinia";
+import moment from "moment";
+import { Constants, type BloodType } from "@/types";
 
 interface IUserEdit {
   name: string;
@@ -33,31 +33,46 @@ const userStore = useUserStore();
 const { getUserInfo, updateUser } = userStore;
 const { user, formattedBirthDate, weightInKilos, heightInMeters } =
   storeToRefs(userStore);
-const { name, cpf, email, birthDate } = useSchemas();
+const { name, cpf, email, birthDate, bloodType, phone, address, complement } =
+  useSchemas();
 
 // Update user data before load the page
 getUserInfo();
 
 const schema = yup.object({
-  name: name.label("nome"),
-  cpf: cpf.label("cpf"),
-  birthdate: birthDate.label("Data de nascimento"),
-  email: email,
+  name,
+  cpf,
+  birthdate: birthDate,
+  weigth: yup.number(),
+  height: yup.number(),
+  bloodType,
+  email,
+  phone,
+  address,
+  complement,
 });
 
-const { handleSubmit } = useForm<IUserEdit>();
+const { handleSubmit } = useForm<IUserEdit>({
+  validationSchema: schema,
+});
+
 const onSubmit = handleSubmit((data) => {
   if (user.value == null) return;
 
-  console.log(data);
   updateUser({
     ...data,
     id: user.value.id,
     birthdate:
       data.birthdate != undefined
-        ? moment(data.birthdate, "DD/MM/YYYY").format("YYYY-MM-DD")
+        ? moment(data.birthdate, Constants.frontendDateFormat).format(
+            Constants.backendDateFormat
+          )
         : undefined,
-    bloodType: undefined,
+    bloodType:
+      data.bloodType != undefined &&
+      data.bloodType != Constants.bloodTypeDefaultOption
+        ? data.bloodType
+        : undefined,
     weight: data.weight != undefined ? data.weight * 1000 : undefined,
     height: data.height != undefined ? data.height * 100 : undefined,
     roles: user.value.roles,
@@ -77,19 +92,14 @@ const onSubmit = handleSubmit((data) => {
       >
         <div class="field-body">
           <NameInput
+            class="is-flex-grow-5"
             name="name"
             :initial-value="user?.name"
-            class="is-flex-grow-5"
           />
-          <CPFInput
-            name="cpf"
-            class="is-flex-grow-0"
-            :initial-value="user?.cpf"
-          />
+          <CPFInput name="cpf" :initial-value="user?.cpf" />
           <DatePicker
             name="birthdate"
             title="Data de nascimento"
-            class="is-flex-grow-0"
             :initial-value="formattedBirthDate"
           />
         </div>
@@ -104,8 +114,8 @@ const onSubmit = handleSubmit((data) => {
           >
             <template #rightAddon>
               <a class="button is-static"> m </a>
-            </template></BaseInput
-          >
+            </template>
+          </BaseInput>
           <BloodTypeSelect name="bloodType" :initial-value="user?.bloodType" />
         </div>
         <div class="field-body">
@@ -139,6 +149,7 @@ const onSubmit = handleSubmit((data) => {
 </template>
 
 <style scoped lang="scss">
+@import "bulma/sass/utilities/mixins.sass";
 .field-body {
   margin-bottom: 1rem;
 }

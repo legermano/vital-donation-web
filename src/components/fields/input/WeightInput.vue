@@ -24,7 +24,7 @@ const updateMask = (value: string) => {
     weightMask.value = "##.##";
   }
 
-  if (dotIndex >= 3) {
+  if (dotIndex >= 3 || dotIndex < 1) {
     weightMask.value = "###.##";
   }
 };

@@ -5,6 +5,7 @@ import { router } from "@/router";
 import { AxiosError } from "axios";
 import { useNotificationStore } from "@/stores";
 import { computed } from "vue";
+import { Constants } from "@/types";
 import moment from "moment";
 import "moment/locale/pt-br";
 import type { IUser } from "@/interfaces";
@@ -17,7 +18,9 @@ export const useUserStore = defineStore("user", () => {
   const formattedBirthDate = computed(() => {
     if (user.value?.birthdate == null) return null;
 
-    return moment(user.value.birthdate, "YYYY-MM-DD").format("DD/MM/YYYY");
+    return moment(user.value.birthdate, Constants.backendDateFormat).format(
+      Constants.frontendDateFormat
+    );
   });
 
   const weightInKilos = computed(() => {
