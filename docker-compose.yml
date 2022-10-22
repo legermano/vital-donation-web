@@ -6,3 +6,5 @@ services:
       context: .
     ports:
       - "${FRONTEND_EXTERNAL_PORT}:80"
+    environment:
+      - NGINX_BACKEND=${NGINX_BACKEND}

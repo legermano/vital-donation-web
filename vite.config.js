@@ -22,10 +22,10 @@ export default ({ node }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/login/, ""),
         },
-        "/api": {
+        "/backend": {
           target: process.env.VITE_API_URL + "/api",
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ""),
+          rewrite: (path) => path.replace(/^\/backend/, ""),
         },
       },
     },

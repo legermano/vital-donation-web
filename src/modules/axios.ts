@@ -4,7 +4,7 @@ import { useAuthStore } from "@/stores";
 import type { AxiosRequestConfig } from "axios";
 
 const axios = coreAxios.create({
-  baseURL: "/api",
+  baseURL: "/backend",
   headers: {
     "Content-Type": "application/json",
   },
