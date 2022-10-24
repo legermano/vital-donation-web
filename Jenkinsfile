@@ -24,16 +24,14 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        stage('Test production build') {
-            agent {
-                label 'linux'
+        stage('Depoy') {
+            when {
+                branch 'master'
             }
             steps {
-                sh '''
-                    docker version
-                    docker info
-                    docker compose version
-                '''
+                sshagent(credentials: ['vm-univates-key']) {
+                    sh 'ssh -o StrictHostKeyChecking=no -l univates 177.44.248.85 \'cd projects/vital-donation-web && ./deploy.sh\''
+                }
             }
         }
     }
