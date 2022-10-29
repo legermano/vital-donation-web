@@ -36,7 +36,7 @@ yup.setLocale({
 yup.addMethod<yup.StringSchema>(yup.string, "cpf", function (message?: string) {
   const msg = message ?? "CPF inválido";
   return this.test("cpf", msg, function (cpf) {
-    if (cpf === undefined) {
+    if (cpf == undefined) {
       return true;
     }
 
@@ -52,7 +52,7 @@ yup.addMethod<yup.StringSchema>(
       message ??
       "A senha deve ter pelo menos 10 caracteres contendo pelo menos 1 letra maiúscula, 1 minúscula, 1 número e um simbolo especial (!@#$%^&*)";
     return this.test("password", msg, function (password) {
-      if (password === undefined) {
+      if (password == undefined) {
         return true;
       }
 
@@ -67,7 +67,7 @@ yup.addMethod<yup.StringSchema>(
   function (message?: string) {
     const msg = message ?? "Número de telefone inválido";
     return this.test("phone", msg, function (phone) {
-      if (phone === undefined) {
+      if (phone == undefined) {
         return true;
       }
 
@@ -83,7 +83,7 @@ yup.addMethod<yup.StringSchema>(
     const msg = message ?? "Tipo sanguíneo inválido";
     return this.test("bloodtype", msg, function (bloodtype) {
       if (
-        bloodtype === undefined ||
+        bloodtype == undefined ||
         bloodtype == Constants.bloodTypeDefaultOption
       ) {
         return true;

@@ -7,25 +7,25 @@ import { ref, watch } from "vue";
 const props = withDefaults(defineProps<IBaseInput>(), {
   horizontal: false,
   showTitle: true,
-  title: "Peso",
+  title: "Peso (Kg)",
 });
 
 const value = ref("");
-const weightMask = ref("###.##");
+const weightMask = ref("###,##");
 
 const updateMask = (value: string) => {
-  const dotIndex = value.indexOf(".");
+  const dotIndex = value.indexOf(",");
 
   if (dotIndex == 1) {
-    weightMask.value = "#.##";
+    weightMask.value = "#,##";
   }
 
   if (dotIndex == 2) {
-    weightMask.value = "##.##";
+    weightMask.value = "##,##";
   }
 
   if (dotIndex >= 3 || dotIndex < 1) {
-    weightMask.value = "###.##";
+    weightMask.value = "###,##";
   }
 };
 
@@ -46,9 +46,5 @@ watch(value, (newValue) => updateMask(newValue));
     :mask="weightMask"
     icon-class="fa-solid fa-weight-scale"
     v-model="value"
-  >
-    <template #rightAddon>
-      <a class="button is-static"> Kg </a>
-    </template>
-  </BaseInput>
+  />
 </template>

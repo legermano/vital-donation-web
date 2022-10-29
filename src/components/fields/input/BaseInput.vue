@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useField } from "vee-validate";
-import { toRef, computed, useSlots } from "vue";
+import { toRef, computed } from "vue";
 import { InteractionModes } from "@/modules";
 // Needs to import directly from the file,because namespace is not supported by vite-plugin-vue-type-imports
 import type { IBaseInput } from "@/interfaces/IBaseInput";
@@ -8,7 +8,6 @@ import { InteractionMode } from "@/types";
 
 defineEmits(["update:modelValue"]);
 
-const slots = useSlots();
 const props = withDefaults(defineProps<IBaseInput>(), {
   horizontal: false,
   showTitle: true,
@@ -66,13 +65,7 @@ const handlers = computed(() => {
       <label class="label">{{ title }}</label>
     </div>
     <div class="field-body">
-      <div
-        class="field"
-        :class="{ 'has-addons': slots.leftAddon || slots.rightAddon }"
-      >
-        <p class="control" v-if="slots.leftAddon">
-          <slot name="leftAddon"></slot>
-        </p>
+      <div class="field">
         <div
           class="control"
           :class="{
@@ -110,9 +103,6 @@ const handlers = computed(() => {
             <i class="fas fa-exclamation-triangle"></i>
           </span>
         </div>
-        <p class="control" v-if="slots.rightAddon">
-          <slot name="rightAddon"></slot>
-        </p>
         <p v-if="errorMessage" class="help is-danger">{{ errorMessage }}</p>
       </div>
     </div>

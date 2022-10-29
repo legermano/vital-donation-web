@@ -26,13 +26,13 @@ export const useUserStore = defineStore("user", () => {
   const weightInKilos = computed(() => {
     if (user.value?.weight == null) return;
 
-    return (user.value.weight / 1000).toFixed(2);
+    return user.value.weight.toFixed(2);
   });
 
   const heightInMeters = computed(() => {
     if (user.value?.height == null) return;
 
-    return (user.value.height / 100).toFixed(2);
+    return user.value.height.toFixed(2);
   });
 
   const createUser = (

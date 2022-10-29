@@ -33,9 +33,5 @@ watch(value, (newValue) => {
     :mask="phoneMask"
     icon-class="fa-solid fa-phone"
     v-model="value"
-  >
-    <template #leftAddon>
-      <a class="button is-static">+55</a>
-    </template>
-  </BaseInput>
+  />
 </template>
