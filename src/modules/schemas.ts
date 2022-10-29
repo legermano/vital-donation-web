@@ -2,7 +2,13 @@ import { Constants } from "@/types";
 import yup from "./yup";
 
 export default function useSchemas() {
-  const name = yup.string().required().min(4).max(255).label("nome");
+  const name = yup
+    .string()
+    .required()
+    .min(4)
+    .max(255)
+    .matches(/\w+\s+\w+/, "Preencha o nome completo")
+    .label("nome");
   const email = yup.string().required().email().max(255);
   const cpf = yup.string().required().cpf();
   const password = yup.string().required().password().max(255).label("senha");
