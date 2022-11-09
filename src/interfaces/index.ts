@@ -5,3 +5,4 @@ export type { default as IAuth } from "./IAuth";
 export type { IBaseInput } from "./IBaseInput";
 export type { IBaseSelect } from "./IBaseSelection";
 export type { IBaseDate } from "./IBaseDate";
+export type { default as IHTMLElementCollapsible } from "./IHTMLElementCollapsible";

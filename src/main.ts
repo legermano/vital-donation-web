@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { VueMaskDirective } from "v-mask";
+import { UidPlugin } from "@shimyshack/uid";
 
 import App from "@/App.vue";
 import { router } from "@/router";
@@ -19,5 +20,6 @@ const app = createApp(App).directive("mask", vMaskV3);
 
 app.use(createPinia());
 app.use(router);
+app.use(UidPlugin);
 
 app.mount("#app");

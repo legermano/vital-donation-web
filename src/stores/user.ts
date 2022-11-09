@@ -71,7 +71,6 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const updateUser = (user: IUser): void => {
-    console.log(user);
     axios
       .put(`/users/${user.id}`, user)
       .then(() => {

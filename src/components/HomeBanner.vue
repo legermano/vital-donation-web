@@ -6,13 +6,6 @@
       </div>
     </div>
   </section>
-  <section id="scrollDiv" class="hero is-fullheight-with-navbar background">
-    <div class="hero-body">
-      <div class="container has-text-centered">
-        <p class="title has-text-white">Doe sangue, salve vidas! 2</p>
-      </div>
-    </div>
-  </section>
 </template>
 
 <style scoped>
