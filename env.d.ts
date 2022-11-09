@@ -11,5 +11,4 @@ declare module "v-mask" {
   export const VueMaskDirective: VueMaskDirectiveType;
 }
 
-declare module "@creativebulma/bulma-collapsible";
 declare module "@shimyshack/uid";

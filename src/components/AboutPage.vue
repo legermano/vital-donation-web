@@ -7,7 +7,7 @@ import { CollapsibleCard } from ".";
     <div class="hero-body">
       <div class="container">
         <div class="title is-4">Requisitos para doar</div>
-        <CollapsibleCard title="Requesitos" :active="true">
+        <CollapsibleCard title="Requesitos" :active="false">
           <template #component>
             <div class="content is-normal">
               <ul>
@@ -419,7 +419,7 @@ import { CollapsibleCard } from ".";
   }
 
   .card-content {
-    padding: 0 !important;
+    padding: 0 1.5rem !important;
 
     .content {
       margin-bottom: 1em;

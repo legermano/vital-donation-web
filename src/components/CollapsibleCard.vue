@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import bulmaCollapsible from "@creativebulma/bulma-collapsible";
-import type { IHTMLElementCollapsible } from "@/interfaces";
 
 const props = defineProps({
   title: {
@@ -22,29 +20,33 @@ const props = defineProps({
   },
 });
 
-const card = ref<null | IHTMLElementCollapsible>(null);
+const card = ref<null | HTMLElement>(null);
 const isActive = ref<boolean>(props.active);
 
 onMounted(() => {
-  if (card.value != null) {
-    new bulmaCollapsible(card.value);
-  }
-});
-
-const toogleCard = () => {
-  if (props.expandable == false) {
-    return;
-  }
-
   if (card.value == null) {
     return;
   }
 
+  if (props.active == false) {
+    card.value.style.height = "0";
+  }
+});
+
+const toogleCard = () => {
+  if (props.expandable == false || card.value == null) {
+    return;
+  }
+
   if (card.value.classList.contains("is-active")) {
-    card.value.bulmaCollapsible("collapse");
+    card.value.style.height = "0";
+    card.value.classList.remove("is-active");
+    card.value.setAttribute("aria-expanded", "false");
     isActive.value = false;
   } else {
-    card.value.bulmaCollapsible("expand");
+    card.value.style.height = card.value.scrollHeight + "px";
+    card.value.classList.add("is-active");
+    card.value.setAttribute("aria-expanded", "true");
     isActive.value = true;
   }
 };
@@ -62,7 +64,6 @@ const toogleCard = () => {
       <p class="card-header-title">{{ title }}</p>
       <a
         v-if="expandable"
-        data-action="collapse"
         class="card-header-icon is-hidden-fullscreen"
         aria-label="more options"
       >
@@ -93,3 +94,10 @@ const toogleCard = () => {
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.is-collapsible {
+  overflow-y: hidden;
+  transition: height 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+</style>
