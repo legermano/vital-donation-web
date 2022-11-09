@@ -7,7 +7,7 @@ import { CollapsibleCard } from ".";
     <div class="hero-body">
       <div class="container">
         <div class="title is-4">Requisitos para doar</div>
-        <CollapsibleCard title="Requesitos" :active="false">
+        <CollapsibleCard title="Requesitos" :active="true">
           <template #component>
             <div class="content is-normal">
               <ul>
