@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { HomeBanner, DownArrows, AboutPage } from "@/components";
+import {
+  HomeBanner,
+  DownArrows,
+  FrequentAskedQuestions,
+  AboutPage,
+} from "@/components";
 </script>
 
 <template>
   <HomeBanner />
   <AboutPage />
-  <DownArrows to="#scrollDiv" />
+  <FrequentAskedQuestions />
+  <DownArrows to="#about-page-section" />
 </template>

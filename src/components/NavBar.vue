@@ -48,11 +48,18 @@ const logout = () => {
     >
       <div class="navbar-start">
         <RouterLink
-          to="/#scrollDiv"
+          to="/#about-page-section"
           class="navbar-item item-home"
           @click="closeBurger"
         >
           Sobre
+        </RouterLink>
+        <RouterLink
+          to="/#faq-section"
+          class="navbar-item item-home"
+          @click="closeBurger"
+        >
+          FAQ
         </RouterLink>
       </div>
 
