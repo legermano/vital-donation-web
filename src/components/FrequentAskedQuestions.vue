@@ -6,7 +6,7 @@ import { CollapsibleCard } from ".";
   <section id="faq-section" class="hero has-background-danger-light">
     <div class="hero-body">
       <div class="container">
-        <h1 class="title is-2 has-text-centered mt-2">FAQ</h1>
+        <h1 class="title is-2 has-text-centered">FAQ</h1>
         <div class="title is-3">Quais são os requisitos para doar?</div>
         <CollapsibleCard title="Requesitos" :active="true">
           <template #component>

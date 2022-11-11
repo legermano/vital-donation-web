@@ -61,6 +61,13 @@ const logout = () => {
         >
           FAQ
         </RouterLink>
+        <RouterLink
+          to="/#institutional-footer"
+          class="navbar-item item-home"
+          @click="closeBurger"
+        >
+          Institucional
+        </RouterLink>
       </div>
 
       <div class="navbar-end">

@@ -4,6 +4,7 @@ import {
   DownArrows,
   FrequentAskedQuestions,
   AboutPage,
+  InstitutionalFooter,
 } from "@/components";
 </script>
 
@@ -11,5 +12,6 @@ import {
   <HomeBanner />
   <AboutPage />
   <FrequentAskedQuestions />
+  <InstitutionalFooter />
   <DownArrows to="#about-page-section" />
 </template>

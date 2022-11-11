@@ -94,7 +94,7 @@
 @import "bulma/sass/utilities/mixins.sass";
 section#about-page-section {
   display: grid;
-  padding: 5rem 2rem 2rem 2rem;
+  padding: 2rem;
   grid-template-columns: 300px 1fr;
   gap: 1rem;
   align-items: center;
