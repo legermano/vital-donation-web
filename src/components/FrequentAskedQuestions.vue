@@ -3,7 +3,7 @@ import { CollapsibleCard } from ".";
 </script>
 
 <template>
-  <section id="faq-section" class="hero">
+  <section id="faq-section" class="hero has-background-danger-light">
     <div class="hero-body">
       <div class="container">
         <h1 class="title is-2 has-text-centered mt-2">FAQ</h1>
