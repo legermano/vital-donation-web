@@ -36,11 +36,17 @@ import { CollapsibleCard } from ".";
                         continuar até os 69 anos de idade.
                       </li>
                       <li>
-                        Para menores de 18 anos, clique aqui para ver quais os
-                        documentos obrigatórios e para poder imprimir o
-                        formulário de autorização (que deverá ser assinado no
-                        local da doação, pelo responsável legal, que acompanhará
-                        o menor).
+                        Para menores de 18 anos,
+                        <a
+                          href="https://drive.google.com/file/d/1WTB5PVRhKn9Fd0nCT3a1-LV8EPwmmV9O/view?usp=share_link"
+                          target="_blank"
+                        >
+                          clique aqui
+                        </a>
+                        para ver quais os documentos obrigatórios e para poder
+                        imprimir o formulário de autorização (que deverá ser
+                        assinado no local da doação, pelo responsável legal, que
+                        acompanhará o menor).
                       </li>
                     </ul>
                   </div>

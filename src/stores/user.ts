@@ -1,6 +1,6 @@
 import { useStorage } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { axios } from "@/modules";
+import { axios, useUtils } from "@/modules";
 import { router } from "@/router";
 import { AxiosError } from "axios";
 import { useNotificationStore } from "@/stores";
@@ -66,7 +66,12 @@ export const useUserStore = defineStore("user", () => {
           return;
         }
 
-        notificationStore.error("Erro ao criar uma nova conta", error.message);
+        if (!useUtils().isTokenExpiredError(error)) {
+          notificationStore.error(
+            "Erro ao criar uma nova conta",
+            error.message
+          );
+        }
       });
   };
 
@@ -97,7 +102,9 @@ export const useUserStore = defineStore("user", () => {
           return;
         }
 
-        notificationStore.error("Error ao atualizar dados", error.message);
+        if (!useUtils().isTokenExpiredError(error)) {
+          notificationStore.error("Error ao atualizar dados", error.message);
+        }
       });
   };
 

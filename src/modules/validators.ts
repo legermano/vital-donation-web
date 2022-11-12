@@ -2,18 +2,17 @@ import { BloodType } from "@/types";
 
 export default function useValidators() {
   const validateCPF = (cpf: string): boolean => {
-    let add = 0;
-    let rev = 0;
-    // Remove non-numeric characters
-    cpf = cpf.replace(/[^\d]+/g, "");
-
-    if (cpf == "") {
+    if (typeof cpf !== "string") {
       return false;
     }
 
-    // Eliminate know false values
+    cpf = cpf.replace(/[^\d]+/g, "");
+
+    if (cpf.length !== 11 || !!cpf.match(/(\d)\1{10}/)) {
+      return false;
+    }
+
     if (
-      cpf.length != 11 ||
       cpf == "00000000000" ||
       cpf == "11111111111" ||
       cpf == "22222222222" ||
@@ -28,38 +27,16 @@ export default function useValidators() {
       return false;
     }
 
-    // Validate the first digit
-    for (let i = 0; i < 9; i++) {
-      add += parseInt(cpf.charAt(i)) * (10 - i);
-    }
+    const values = cpf.split("").map((el) => +el);
+    const rest = (count: number) =>
+      ((values
+        .slice(0, count - 12)
+        .reduce((soma, el, index) => soma + el * (count - index), 0) *
+        10) %
+        11) %
+      10;
 
-    rev = 11 - (add % 11);
-
-    if (rev == 10 || rev == 1) {
-      rev = 0;
-    }
-
-    if (rev != parseInt(cpf.charAt(9))) {
-      return false;
-    }
-
-    // Validate the second digit
-    add = 0;
-    for (let i = 0; i < 10; i++) {
-      add += parseInt(cpf.charAt(i)) * (11 - i);
-    }
-
-    rev = 11 - (add % 11);
-
-    if (rev == 10 || rev == 11) {
-      rev = 0;
-    }
-
-    if (rev != parseInt(cpf.charAt(10))) {
-      return false;
-    }
-
-    return true;
+    return rest(10) === values[9] && rest(11) === values[10];
   };
 
   const validatePassword = (pass: string): boolean => {

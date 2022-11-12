@@ -58,11 +58,25 @@ export const useAuthStore = defineStore("auth", () => {
     router.push("/account/login");
   };
 
+  const refreshToken = async (): Promise<void> => {
+    await axios
+      .post("/backend/users/refresh-token", null, {
+        headers: {
+          Authorization: `Bearer ${auth.value?.refresh_token}`,
+        },
+      })
+      .then(({ data }) => {
+        auth.value = data;
+      })
+      .catch(() => logout());
+  };
+
   return {
     auth,
     returnUrl,
     isLoggedIn,
     login,
     logout,
+    refreshToken,
   };
 });

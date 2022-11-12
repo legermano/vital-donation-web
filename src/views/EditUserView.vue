@@ -45,6 +45,9 @@ const {
   height,
 } = useSchemas();
 
+const formmatedWeight = weightInKilos?.replace(".", ",");
+const formmatedHeight = heightInMeters?.replace(".", ",");
+
 // Update user data before load the page
 getUserInfo();
 
@@ -82,8 +85,14 @@ const onSubmit = handleSubmit((data) => {
       data.bloodType != Constants.bloodTypeDefaultOption
         ? data.bloodType
         : undefined,
-    weight: data.weight != undefined ? data.weight * 1000 : undefined,
-    height: data.height != undefined ? data.height * 100 : undefined,
+    weight:
+      data.weight != undefined
+        ? Number(data.weight.toString().replace(/,/, ".")) * 1000
+        : undefined,
+    height:
+      data.height != undefined
+        ? Number(data.height.toString().replace(/,/, ".")) * 100
+        : undefined,
     roles: user.value.roles,
   });
 });
@@ -116,7 +125,7 @@ const onSubmit = handleSubmit((data) => {
         </div>
         <div class="level">
           <div class="level-item mw-33 is-flex-shrink-1">
-            <WeightInput name="weight" :initial-value="weightInKilos" />
+            <WeightInput name="weight" :initial-value="formmatedWeight" />
           </div>
           <div class="level-item mw-33 is-flex-shrink-1">
             <BaseInput
@@ -124,7 +133,7 @@ const onSubmit = handleSubmit((data) => {
               title="Altura (m)"
               mask="#,##"
               icon-class="fa-solid fa-ruler-vertical"
-              :initial-value="heightInMeters"
+              :initial-value="formmatedHeight"
             />
           </div>
           <div class="level-item mw-33">
