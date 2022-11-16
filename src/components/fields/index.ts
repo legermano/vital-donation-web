@@ -8,3 +8,4 @@ export { default as WeightInput } from "./input/WeightInput.vue";
 export { default as DatePicker } from "./date/DatePicker.vue";
 export { default as BaseSelect } from "./select/BaseSelect.vue";
 export { default as BloodTypeSelect } from "./select/BloodTypeSelect.vue";
+export { default as QuestionCheckRadio } from "./radio/QuestionCheckRadio.vue";

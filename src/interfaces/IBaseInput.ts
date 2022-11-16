@@ -12,4 +12,5 @@ export interface IBaseInput {
   mask?: string | Function;
   mode?: InteractionMode;
   initialValue?: string | number | null;
+  useFieldType?: string;
 }

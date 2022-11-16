@@ -23,6 +23,7 @@ const { meta, value, errorMessage, handleChange, handleBlur } = useField(
   toRef(props, "name"),
   undefined,
   {
+    type: props.useFieldType,
     validateOnValueUpdate: false,
     initialValue: props.initialValue,
   }

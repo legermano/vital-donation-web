@@ -92,6 +92,7 @@
 
 <style scoped lang="scss">
 @import "bulma/sass/utilities/mixins.sass";
+
 section#about-page-section {
   display: grid;
   padding: 2rem;

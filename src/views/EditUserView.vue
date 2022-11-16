@@ -10,6 +10,7 @@ import {
   CellphoneInput,
   WeightInput,
 } from "@/components/fields";
+import { UserInfoFormQuestions } from "@/components";
 import { yup, useSchemas } from "@/modules";
 import { router } from "@/router";
 import { useUserStore } from "@/stores";
@@ -99,9 +100,9 @@ const onSubmit = handleSubmit((data) => {
 </script>
 
 <template>
-  <div class="hero-body">
+  <div class="hero-body" style="display: none">
     <div class="container">
-      <h3 class="title has-text-centered">Editar dados</h3>
+      <h3 class="title has-text-centered">Dados pessoais</h3>
       <hr class="hr" />
       <form
         class="columns is-flex is-flex-direction-column box"
@@ -180,6 +181,7 @@ const onSubmit = handleSubmit((data) => {
       </form>
     </div>
   </div>
+  <UserInfoFormQuestions />
 </template>
 
 <style scoped lang="scss">
