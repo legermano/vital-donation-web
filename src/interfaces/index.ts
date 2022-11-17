@@ -7,6 +7,7 @@ export type { default as IForm } from "./IForm";
 export type { default as IAnswer } from "./IAnswer";
 export type { default as ICompletedForm } from "./ICompletedForm";
 export type { default as ICompletedQuestion } from "./ICompletedQuestion";
+export type { default as IUserFormQuestion } from "./IUserFormQuestion";
 export type { IBaseInput } from "./IBaseInput";
 export type { IBaseSelect } from "./IBaseSelection";
 export type { IBaseDate } from "./IBaseDate";

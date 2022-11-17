@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { QuestionCheckRadio } from "./fields";
+import { QuestionCheckRadio } from "@/components/fields";
 import { router } from "@/router";
-import { useFormStore, useUserStore } from "@/stores";
-import { storeToRefs } from "pinia";
+import { useFormStore } from "@/stores";
 import { useForm } from "vee-validate";
 
-const formStore = useFormStore();
-const { getAllForms } = formStore;
-const { userInfoForm } = storeToRefs(formStore);
-
-useUserStore().getUserCompletedForms();
-getAllForms();
+const questions = useFormStore().getUserFormQuestions();
 
 const { handleSubmit } = useForm();
 
@@ -29,7 +23,7 @@ const onSubmit = handleSubmit((data) => {
       >
         <div class="level questions">
           <div
-            v-for="question in userInfoForm?.questions"
+            v-for="question in questions"
             :key="question.id"
             class="level-item"
           >

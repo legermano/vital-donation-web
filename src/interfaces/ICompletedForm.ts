@@ -1,3 +1,5 @@
+import type ICompletedQuestion from "./ICompletedQuestion";
+
 export default interface ICompletedForm {
   id: string;
   form: {
@@ -7,4 +9,5 @@ export default interface ICompletedForm {
     id: string;
     name: string;
   };
+  completedQuestions: Array<ICompletedQuestion>;
 }

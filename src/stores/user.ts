@@ -110,7 +110,10 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const getUserInfo = () => {
-    axios.get("/users").then(({ data }) => (user.value = data));
+    axios.get("/users").then(({ data }) => {
+      user.value = data;
+      getUserCompletedForms();
+    });
   };
 
   const cleanUserInfo = () => (user.value = null);
