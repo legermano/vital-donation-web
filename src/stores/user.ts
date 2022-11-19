@@ -4,16 +4,17 @@ import { axios, useUtils } from "@/modules";
 import { router } from "@/router";
 import { AxiosError } from "axios";
 import { useNotificationStore } from "@/stores";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { Constants } from "@/types";
 import moment from "moment";
 import "moment/locale/pt-br";
-import type { IUser } from "@/interfaces";
+import type { ICompletedForm, IUser } from "@/interfaces";
 
 moment.locale("pt-br");
 
 export const useUserStore = defineStore("user", () => {
   const user = useStorage<IUser | null>("user", {} as IUser);
+  const completedForms = ref<Array<ICompletedForm> | null>(null);
 
   const formattedBirthDate = computed(() => {
     if (user.value?.birthdate == null) return null;
@@ -111,13 +112,21 @@ export const useUserStore = defineStore("user", () => {
   const getUserInfo = () => {
     axios.get("/users").then(({ data }) => {
       user.value = data;
+      getUserCompletedForms();
     });
   };
 
   const cleanUserInfo = () => (user.value = null);
 
+  const getUserCompletedForms = () => {
+    axios
+      .get(`/forms/completed/forms/user/${user.value?.id}`)
+      .then(({ data }) => (completedForms.value = data));
+  };
+
   return {
     user,
+    completedForms,
     formattedBirthDate,
     weightInKilos,
     heightInMeters,
@@ -125,5 +134,6 @@ export const useUserStore = defineStore("user", () => {
     getUserInfo,
     cleanUserInfo,
     updateUser,
+    getUserCompletedForms,
   };
 });
