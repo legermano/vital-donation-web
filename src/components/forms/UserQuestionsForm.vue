@@ -4,13 +4,16 @@ import { router } from "@/router";
 import { useFormStore } from "@/stores";
 import { useForm } from "vee-validate";
 
-const questions = useFormStore().getUserFormQuestions();
+const formStore = useFormStore();
+const { getUserFormQuestions, setUserPersonalAnswer } = formStore;
+
+const questions = getUserFormQuestions();
 
 const { handleSubmit } = useForm();
 
-const onSubmit = handleSubmit((data) => {
-  console.log(data);
-});
+const onSubmit = handleSubmit((data: Record<string, string>) =>
+  setUserPersonalAnswer(data)
+);
 </script>
 <template>
   <div class="hero-body">
@@ -37,7 +40,10 @@ const onSubmit = handleSubmit((data) => {
         <hr class="hr" />
         <div class="buttons">
           <button class="button is-danger">Salvar</button>
-          <button class="button is-danger is-light" @click="router.back()">
+          <button
+            class="button is-danger is-light"
+            @click.prevent="router.back()"
+          >
             Cancelar
           </button>
         </div>

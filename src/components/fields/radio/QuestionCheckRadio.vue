@@ -28,13 +28,19 @@ withDefaults(defineProps<IBaseQuestionRadio>(), {
             :name="name"
             :id="answer.id"
             :value="answer.id"
+            v-model="question.userAnswer"
           />
           <label :for="answer.id">{{ answer.answer }}</label>
         </template>
         <label class="mr-1" :for="`${name}_observation`">
           <strong>Obs: </strong>
         </label>
-        <Field class="input" type="text" :name="`${name}_observation`" />
+        <Field
+          class="input"
+          type="text"
+          :name="`${name}_observation`"
+          :value="question.userObservation"
+        />
       </div>
     </template>
   </BaseInput>

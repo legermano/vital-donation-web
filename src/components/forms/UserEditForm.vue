@@ -170,7 +170,10 @@ const onSubmit = handleSubmit((data) => {
         <hr class="hr" />
         <div class="buttons">
           <button class="button is-danger">Salvar</button>
-          <button class="button is-danger is-light" @click="router.back()">
+          <button
+            class="button is-danger is-light"
+            @click.prevent="router.back()"
+          >
             Cancelar
           </button>
         </div>
