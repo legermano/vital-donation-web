@@ -183,7 +183,6 @@ const onSubmit = handleSubmit((data) => {
 </template>
 
 <style scoped lang="scss">
-@import "bulma/sass/utilities/mixins.sass";
 .level {
   align-items: flex-start;
 

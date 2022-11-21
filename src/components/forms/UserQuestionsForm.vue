@@ -53,16 +53,14 @@ const onSubmit = handleSubmit((data: Record<string, string>) =>
 </template>
 
 <style scoped lang="scss">
-@import "bulma/sass/utilities/mixins.sass";
-
 .questions {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   align-items: flex-end;
 
   .level-item {
     justify-content: flex-start;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     padding-right: 1rem;
   }
 

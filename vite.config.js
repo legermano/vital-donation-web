@@ -15,6 +15,13 @@ export default ({ node }) => {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
       },
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import "bulma/sass/utilities/mixins.sass";`,
+        },
+      },
+    },
     server: {
       proxy: {
         "/login": {
