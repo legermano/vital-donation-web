@@ -68,6 +68,13 @@ const logout = () => {
         >
           Institucional
         </RouterLink>
+        <RouterLink
+          to="/donation"
+          class="navbar-item item-home"
+          @click="closeBurger"
+        >
+          Nova doação
+        </RouterLink>
       </div>
 
       <div class="navbar-end">

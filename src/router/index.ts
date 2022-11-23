@@ -21,6 +21,11 @@ export const router = createRouter({
       component: () => import("../views/AboutView.vue"),
     },
     {
+      path: "/donation",
+      name: "donation",
+      component: () => import("@/views/DonationView.vue"),
+    },
+    {
       path: "/user/edit",
       name: "user",
       component: () => import("@/views/EditUserView.vue"),
