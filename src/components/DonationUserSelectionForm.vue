@@ -1,35 +1,60 @@
 <script setup lang="ts">
-import { BaseAutocomplete } from "@/components/fields";
-import type { IBaseAutocompleteItem } from "@/interfaces";
+import { useForm } from "vee-validate";
+import { useNotificationStore, useUserStore } from "@/stores";
+import { UserAutocomplete } from "@/components/fields";
+import { yup } from "@/modules";
+import { storeToRefs } from "pinia";
 
-const options: IBaseAutocompleteItem[] = [
-  {
-    key: "1",
-    value: "Foo",
-  },
-  {
-    key: "2",
-    value: "Bar",
-  },
-  {
-    key: "3",
-    value: "Foo Bar",
-  },
-  {
-    key: "4",
-    value: "Bar Foo",
-  },
-];
+const emit = defineEmits(["nextStepSelectDonator"]);
+
+const userStore = useUserStore();
+const notificationStore = useNotificationStore();
+
+const { users } = storeToRefs(userStore);
+
+const schema = yup.object({
+  userId: yup.string().label("Usuário"),
+});
+
+const { handleSubmit } = useForm<{ userId: string }>({
+  validationSchema: schema,
+});
+
+const onSubmit = handleSubmit((data) => {
+  if (data.userId === "") {
+    notificationStore.warning(
+      "Atenção!",
+      "Necessário escolher um(a) doador(a)"
+    );
+    return;
+  }
+
+  const user = users.value.find((u) => u.id === data.userId);
+
+  if (!user) {
+    notificationStore.error(
+      "Erro",
+      "Não foi encontrado os dados do usuário selecionado"
+    );
+    return;
+  }
+
+  emit("nextStepSelectDonator", user);
+});
 </script>
 <template>
-  <div class="container">
-    <h3 class="title has-text-centered">Selecione o(a) doador(a)</h3>
-    <form>
-      <BaseAutocomplete
-        name="usuario"
-        :options="options"
-        title="Pesquisar doador(a)"
-      />
-    </form>
+  <div class="hero-body">
+    <div class="container">
+      <h3 class="title has-text-centered">Selecione o(a) doador(a)</h3>
+      <form @submit="onSubmit">
+        <Suspense>
+          <UserAutocomplete name="userId" :show-title="false" />
+          <template #fallback> Loading... </template>
+        </Suspense>
+        <div class="buttons is-right">
+          <button class="button is-danger is-right">Avançar</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>

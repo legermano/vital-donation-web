@@ -15,6 +15,7 @@ moment.locale("pt-br");
 export const useUserStore = defineStore("user", () => {
   const user = useStorage<IUser | null>("user", {} as IUser);
   const completedForms = ref<Array<ICompletedForm> | null>(null);
+  const users = ref<IUser[]>([]);
 
   const formattedBirthDate = computed(() => {
     if (user.value?.birthdate == null) return null;
@@ -116,6 +117,10 @@ export const useUserStore = defineStore("user", () => {
     });
   };
 
+  const getAllUsers = async (): Promise<void> => {
+    await axios.get("/users/list").then(({ data }) => (users.value = data));
+  };
+
   const cleanUserInfo = () => (user.value = null);
 
   const getUserCompletedForms = () => {
@@ -126,6 +131,7 @@ export const useUserStore = defineStore("user", () => {
 
   return {
     user,
+    users,
     completedForms,
     formattedBirthDate,
     weightInKilos,
@@ -135,5 +141,6 @@ export const useUserStore = defineStore("user", () => {
     cleanUserInfo,
     updateUser,
     getUserCompletedForms,
+    getAllUsers,
   };
 });
