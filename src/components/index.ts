@@ -6,4 +6,6 @@ export { default as FrequentAskedQuestions } from "./FrequentAskedQuestions.vue"
 export { default as AboutPage } from "./AboutPage.vue";
 export { default as InstitutionalFooter } from "./InstitutionalFooter.vue";
 export { default as CollapsibleCard } from "./CollapsibleCard.vue";
-export { default as DonationUserSelection } from "./DonationUserSelectionForm.vue";
+export { default as DonationSelectDonatorStep } from "./DonationSelectDonatorStep.vue";
+export { default as DonationReviseDonatorData } from "./DonationReviseDonatorData.vue";
+export { default as LoaderSpinner } from "./LoaderSpinner.vue";

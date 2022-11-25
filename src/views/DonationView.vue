@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useUserStore } from "@/stores";
-import { DonationUserSelection } from "@/components";
+import {
+  DonationReviseDonatorData,
+  DonationSelectDonatorStep,
+} from "@/components";
 import type { IUser } from "@/interfaces";
-import { storeToRefs } from "pinia";
 
-const userStore = useUserStore();
-const { users } = storeToRefs(userStore);
 const currentStep = ref<number>(1);
 const donator = ref<IUser | null>(null);
 
@@ -17,6 +16,7 @@ const FILL_RECURRENT_QUESTIONS_STEP = 4;
 
 const nextStepSelectDonator = (user: IUser) => {
   donator.value = user;
+  currentStep.value = REVISE_DONATOR_DATA;
 };
 </script>
 <template>
@@ -83,8 +83,13 @@ const nextStepSelectDonator = (user: IUser) => {
     </li>
   </ul>
   <hr class="hr" />
-  <DonationUserSelection
+  <DonationSelectDonatorStep
     v-if="currentStep == SELECT_DONATOR_STEP"
     @next-step-select-donator="nextStepSelectDonator"
+  />
+  <DonationReviseDonatorData
+    v-if="currentStep == REVISE_DONATOR_DATA && donator != null"
+    :donator="donator"
+    @previous-step-donation="currentStep = SELECT_DONATOR_STEP"
   />
 </template>

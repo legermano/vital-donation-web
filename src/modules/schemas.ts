@@ -9,7 +9,7 @@ export default function useSchemas() {
     .max(255)
     .matches(/\w+\s+\w+/, "Preencha o nome completo")
     .label("nome");
-  const email = yup.string().required().email().max(255);
+  const email = yup.string().email().max(255).required();
   const cpf = yup.string().required().cpf();
   const password = yup.string().required().password().max(255).label("senha");
   const requiredString = yup.string().required();

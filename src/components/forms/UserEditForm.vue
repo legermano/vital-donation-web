@@ -10,12 +10,13 @@ import {
   CellphoneInput,
   WeightInput,
 } from "@/components/fields";
-import { yup, useSchemas } from "@/modules";
+import { yup, useSchemas, useUtils } from "@/modules";
 import { router } from "@/router";
 import { useUserStore } from "@/stores";
-import { storeToRefs } from "pinia";
 import moment from "moment";
 import { Constants, type BloodType } from "@/types";
+import type { IUser } from "@/interfaces";
+import type { PropType } from "vue";
 
 interface IUserEdit {
   name: string;
@@ -29,9 +30,16 @@ interface IUserEdit {
   birthdate?: string;
   bloodType?: BloodType;
 }
+
+const props = defineProps({
+  user: {
+    type: Object as PropType<IUser>,
+    required: true,
+  },
+});
+
 const userStore = useUserStore();
-const { updateUser, weightInKilos, heightInMeters } = userStore;
-const { user, formattedBirthDate } = storeToRefs(userStore);
+const { updateUser } = userStore;
 const {
   name,
   cpf,
@@ -44,9 +52,12 @@ const {
   weight,
   height,
 } = useSchemas();
+const { userFormattedBirthDate, userHeightInMeters, userWeightInKilos } =
+  useUtils();
 
-const formmatedWeight = weightInKilos?.replace(".", ",");
-const formmatedHeight = heightInMeters?.replace(".", ",");
+const formmatedWeight = userWeightInKilos(props.user)?.replace(".", ",");
+const formmatedHeight = userHeightInMeters(props.user)?.replace(".", ",");
+const formattedBirthDate = userFormattedBirthDate(props.user);
 
 const schema = yup.object({
   name,
@@ -66,11 +77,9 @@ const { handleSubmit } = useForm<IUserEdit>({
 });
 
 const onSubmit = handleSubmit((data) => {
-  if (user.value == null) return;
-
   updateUser({
     ...data,
-    id: user.value.id,
+    id: props.user.id,
     birthdate:
       data.birthdate != undefined
         ? moment(data.birthdate, Constants.frontendDateFormat).format(
@@ -90,96 +99,89 @@ const onSubmit = handleSubmit((data) => {
       data.height != undefined
         ? Number(data.height.toString().replace(/,/, ".")) * 100
         : undefined,
-    roles: user.value.roles,
+    roles: props.user.roles,
   });
 });
 </script>
 
 <template>
-  <div class="hero-body">
-    <div class="container">
-      <h3 class="title has-text-centered">Dados pessoais</h3>
-      <hr class="hr" />
-      <form
-        class="columns is-flex is-flex-direction-column box"
-        :validation-schema="schema"
-        @submit="onSubmit"
-      >
-        <div class="level">
-          <div class="level-item is-flex-shrink-1 mw-60">
-            <NameInput name="name" :initial-value="user?.name" />
-          </div>
-          <div class="level-item mw-20 is-flex-shrink-1">
-            <CPFInput name="cpf" :initial-value="user?.cpf" />
-          </div>
-          <div class="level-item mw-20 is-flex-shrink-1">
-            <DatePicker
-              name="birthdate"
-              title="Data de nascimento"
-              :initial-value="formattedBirthDate"
-            />
-          </div>
-        </div>
-        <div class="level">
-          <div class="level-item mw-33 is-flex-shrink-1">
-            <WeightInput name="weight" :initial-value="formmatedWeight" />
-          </div>
-          <div class="level-item mw-33 is-flex-shrink-1">
-            <BaseInput
-              name="height"
-              title="Altura (m)"
-              mask="#,##"
-              icon-class="fa-solid fa-ruler-vertical"
-              :initial-value="formmatedHeight"
-            />
-          </div>
-          <div class="level-item mw-33">
-            <BloodTypeSelect
-              name="bloodType"
-              :initial-value="user?.bloodType"
-            />
-          </div>
-        </div>
-        <div class="level">
-          <div class="level-item mw-50">
-            <EmailInput name="email" :initial-value="user?.email" />
-          </div>
-          <div class="level-item mw-50">
-            <CellphoneInput name="phone" :initial-value="user?.phone" />
-          </div>
-        </div>
-        <div class="level">
-          <div class="level-item mw-50">
-            <BaseInput
-              name="address"
-              title="Endereço"
-              icon-class="fa-solid fa-location-dot"
-              :initial-value="user?.address"
-            />
-          </div>
-          <div class="level-item mw-50">
-            <BaseInput
-              name="complement"
-              title="Complemento"
-              icon-class="fa-solid fa-map-location-dot"
-              :initial-value="user?.complement"
-              :is-full-width="true"
-            />
-          </div>
-        </div>
-        <hr class="hr" />
-        <div class="buttons">
-          <button class="button is-danger">Salvar</button>
-          <button
-            class="button is-danger is-light"
-            @click.prevent="router.back()"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
+  <form
+    class="columns is-flex is-flex-direction-column"
+    :validation-schema="schema"
+    @submit="onSubmit"
+  >
+    <div class="level">
+      <div class="level-item is-flex-shrink-1 mw-60">
+        <NameInput name="name" :initial-value="user?.name" />
+      </div>
+      <div class="level-item mw-20 is-flex-shrink-1">
+        <CPFInput name="cpf" :initial-value="user?.cpf" />
+      </div>
+      <div class="level-item mw-20 is-flex-shrink-1">
+        <DatePicker
+          name="birthdate"
+          title="Data de nascimento"
+          :initial-value="formattedBirthDate"
+        />
+      </div>
     </div>
-  </div>
+    <div class="level">
+      <div class="level-item mw-33 is-flex-shrink-1">
+        <WeightInput name="weight" :initial-value="formmatedWeight" />
+      </div>
+      <div class="level-item mw-33 is-flex-shrink-1">
+        <BaseInput
+          name="height"
+          title="Altura (m)"
+          mask="#,##"
+          icon-class="fa-solid fa-ruler-vertical"
+          :initial-value="formmatedHeight"
+        />
+      </div>
+      <div class="level-item mw-33">
+        <BloodTypeSelect name="bloodType" :initial-value="user?.bloodType" />
+      </div>
+    </div>
+    <div class="level">
+      <div class="level-item mw-50">
+        <EmailInput name="email" :initial-value="user?.email" />
+      </div>
+      <div class="level-item mw-50">
+        <CellphoneInput name="phone" :initial-value="user?.phone" />
+      </div>
+    </div>
+    <div class="level">
+      <div class="level-item mw-50">
+        <BaseInput
+          name="address"
+          title="Endereço"
+          icon-class="fa-solid fa-location-dot"
+          :initial-value="user?.address"
+        />
+      </div>
+      <div class="level-item mw-50">
+        <BaseInput
+          name="complement"
+          title="Complemento"
+          icon-class="fa-solid fa-map-location-dot"
+          :initial-value="user?.complement"
+          :is-full-width="true"
+        />
+      </div>
+    </div>
+    <slot name="buttons">
+      <hr class="hr" />
+      <div class="buttons">
+        <button class="button is-danger">Salvar</button>
+        <button
+          class="button is-danger is-light"
+          @click.prevent="router.back()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </slot>
+  </form>
 </template>
 
 <style scoped lang="scss">

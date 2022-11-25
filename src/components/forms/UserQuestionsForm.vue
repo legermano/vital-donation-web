@@ -16,40 +16,24 @@ const onSubmit = handleSubmit((data: Record<string, string>) =>
 );
 </script>
 <template>
-  <div class="hero-body">
-    <div class="container">
-      <h3 class="title has-text-centered">Peguntas pessoais</h3>
-      <hr class="hr" />
-      <form
-        class="columns is-flex is-flex-direction-column box"
-        @submit="onSubmit"
-      >
-        <div class="level questions">
-          <div
-            v-for="question in questions"
-            :key="question.id"
-            class="level-item"
-          >
-            <QuestionCheckRadio
-              :name="question.id"
-              :title="question.question"
-              :question="question"
-            />
-          </div>
-        </div>
-        <hr class="hr" />
-        <div class="buttons">
-          <button class="button is-danger">Salvar</button>
-          <button
-            class="button is-danger is-light"
-            @click.prevent="router.back()"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
+  <form class="columns is-flex is-flex-direction-column" @submit="onSubmit">
+    <div class="level questions">
+      <div v-for="question in questions" :key="question.id" class="level-item">
+        <QuestionCheckRadio
+          :name="question.id"
+          :title="question.question"
+          :question="question"
+        />
+      </div>
     </div>
-  </div>
+    <hr class="hr" />
+    <div class="buttons">
+      <button class="button is-danger">Salvar</button>
+      <button class="button is-danger is-light" @click.prevent="router.back()">
+        Cancelar
+      </button>
+    </div>
+  </form>
 </template>
 
 <style scoped lang="scss">

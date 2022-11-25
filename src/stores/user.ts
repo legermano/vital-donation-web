@@ -4,38 +4,13 @@ import { axios, useUtils } from "@/modules";
 import { router } from "@/router";
 import { AxiosError } from "axios";
 import { useNotificationStore } from "@/stores";
-import { computed, ref } from "vue";
-import { Constants } from "@/types";
-import moment from "moment";
-import "moment/locale/pt-br";
+import { ref } from "vue";
 import type { ICompletedForm, IUser } from "@/interfaces";
-
-moment.locale("pt-br");
 
 export const useUserStore = defineStore("user", () => {
   const user = useStorage<IUser | null>("user", {} as IUser);
   const completedForms = ref<Array<ICompletedForm> | null>(null);
   const users = ref<IUser[]>([]);
-
-  const formattedBirthDate = computed(() => {
-    if (user.value?.birthdate == null) return null;
-
-    return moment(user.value.birthdate, Constants.backendDateFormat).format(
-      Constants.frontendDateFormat
-    );
-  });
-
-  const weightInKilos = computed(() => {
-    if (user.value?.weight == null) return;
-
-    return user.value.weight.toFixed(2);
-  });
-
-  const heightInMeters = computed(() => {
-    if (user.value?.height == null) return;
-
-    return user.value.height.toFixed(2);
-  });
 
   const createUser = (
     name: string,
@@ -133,9 +108,6 @@ export const useUserStore = defineStore("user", () => {
     user,
     users,
     completedForms,
-    formattedBirthDate,
-    weightInKilos,
-    heightInMeters,
     createUser,
     getUserInfo,
     cleanUserInfo,

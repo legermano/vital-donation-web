@@ -4,6 +4,7 @@ import { useNotificationStore, useUserStore } from "@/stores";
 import { UserAutocomplete } from "@/components/fields";
 import { yup } from "@/modules";
 import { storeToRefs } from "pinia";
+import { LoaderSpinner } from "@/components";
 
 const emit = defineEmits(["nextStepSelectDonator"]);
 
@@ -49,7 +50,7 @@ const onSubmit = handleSubmit((data) => {
       <form @submit="onSubmit">
         <Suspense>
           <UserAutocomplete name="userId" :show-title="false" />
-          <template #fallback> Loading... </template>
+          <template #fallback> <LoaderSpinner /> </template>
         </Suspense>
         <div class="buttons is-right">
           <button class="button is-danger is-right">Avançar</button>
