@@ -11,3 +11,4 @@ export { default as DonationPersonalQuestionsStep } from "./DonationPersonalQues
 export { default as DonationRecurrentQuestionsStep } from "./DonationRecurrentQuestionsStep.vue";
 export { default as DonationSelectBloodCenterStep } from "./DonationSelectBloodCenterStep.vue";
 export { default as LoaderSpinner } from "./LoaderSpinner.vue";
+export { default as DonationListTable } from "./DonationListTable.vue";

@@ -1,4 +1,4 @@
-import type IBloodCenter from "@/interfaces/IBloodCenter";
+import type { IBloodCenter } from "@/interfaces";
 import { axios } from "@/modules";
 import { defineStore } from "pinia";
 import { ref } from "vue";

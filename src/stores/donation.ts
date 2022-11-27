@@ -2,6 +2,7 @@ import type { IDonation } from "@/interfaces";
 import { axios, useUtils } from "@/modules";
 import { defineStore } from "pinia";
 import { useToast } from "@/modules";
+import type { IBloodBag } from "@/interfaces";
 
 export const useDonationStore = defineStore("donation", () => {
   const { success, error } = useToast();
@@ -56,9 +57,25 @@ export const useDonationStore = defineStore("donation", () => {
       });
   };
 
+  const getDonationBloodBags = async (
+    donationId: string
+  ): Promise<IBloodBag[] | void> => {
+    return await axios
+      .get<IBloodBag[]>("/blood-bags")
+      .then(({ data }) => {
+        return data.filter((b) => b.donation?.id === donationId);
+      })
+      .catch((err) => {
+        if (!useUtils().isTokenExpiredError(error)) {
+          error(`Erro ao buscar as bolsas de sangue: ${err.message}`);
+        }
+      });
+  };
+
   return {
     getUserDonations,
     createDonation,
     updateDonation,
+    getDonationBloodBags,
   };
 });

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore, useUserStore } from "@/stores";
 import { HomeView } from "@/views";
 import accountRoutes from "./account.routes";
+import donationRoutes from "./donation.routes";
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,24 +14,12 @@ export const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/about",
-      name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import("../views/AboutView.vue"),
-    },
-    {
-      path: "/donation",
-      name: "donation",
-      component: () => import("@/views/DonationView.vue"),
-    },
-    {
       path: "/user/edit",
       name: "user",
       component: () => import("@/views/EditUserView.vue"),
     },
     { ...accountRoutes },
+    { ...donationRoutes },
   ],
   scrollBehavior(to) {
     if (to.hash) {
@@ -61,7 +50,7 @@ router.beforeEach(async (to) => {
   }
 
   // Redirect to the home page if the logged user does not have the needed role
-  const managerPages = ["/donation"];
+  const managerPages = ["/donation/new"];
   const managerRoleRequired = managerPages.includes(to.path);
 
   if (managerRoleRequired && !userStore.isManager) {
