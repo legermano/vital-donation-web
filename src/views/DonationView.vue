@@ -1,22 +1,36 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import {
-  DonationReviseDonatorData,
-  DonationSelectDonatorStep,
+  DonationPersonalQuestionsStep,
+  DonationReviseDonorDataStep,
+  DonationSelectDonorStep,
+  DonationRecurrentQuestionsStep,
+  DonationSelectBloodCenterStep,
 } from "@/components";
 import type { IUser } from "@/interfaces";
+import { useUserStore } from "@/stores";
 
-const currentStep = ref<number>(1);
-const donator = ref<IUser | null>(null);
-
-const SELECT_DONATOR_STEP = 1;
-const REVISE_DONATOR_DATA = 2;
+const SELECT_DONOR_STEP = 1;
+const REVISE_DONOR_DATA = 2;
 const FILL_PERSONAL_QUESTIONS_STEP = 3;
 const FILL_RECURRENT_QUESTIONS_STEP = 4;
+const SELECT_BLOOD_CENTER = 5;
 
-const nextStepSelectDonator = (user: IUser) => {
-  donator.value = user;
-  currentStep.value = REVISE_DONATOR_DATA;
+const userStore = useUserStore();
+
+const currentStep = ref<number>(SELECT_DONOR_STEP);
+const donor = ref<IUser | null>(null);
+
+const goToReviseDonorStep = (user: IUser) => {
+  donor.value = user;
+  currentStep.value = REVISE_DONOR_DATA;
+};
+
+const backToReviseDonorStep = async () => {
+  if (donor.value != null) {
+    donor.value = await userStore.getUser(donor.value.id);
+  }
+  currentStep.value = REVISE_DONOR_DATA;
 };
 </script>
 <template>
@@ -24,7 +38,7 @@ const nextStepSelectDonator = (user: IUser) => {
     <li
       class="steps-segment"
       :class="{
-        'is-active': currentStep == SELECT_DONATOR_STEP,
+        'is-active': currentStep == SELECT_DONOR_STEP,
       }"
     >
       <span class="steps-marker">
@@ -33,13 +47,13 @@ const nextStepSelectDonator = (user: IUser) => {
         </span>
       </span>
       <div class="steps-content">
-        <p class="heading">Escolha o(a) doador(a)</p>
+        <p class="heading">Selecione o(a) doador(a)</p>
       </div>
     </li>
     <li
       class="steps-segment"
       :class="{
-        'is-active': currentStep == REVISE_DONATOR_DATA,
+        'is-active': currentStep == REVISE_DONOR_DATA,
       }"
     >
       <span class="steps-marker">
@@ -66,13 +80,11 @@ const nextStepSelectDonator = (user: IUser) => {
         <p class="heading">Perguntas pessoais</p>
       </div>
     </li>
-    <li class="steps-segment">
-      <span
-        class="steps-marker"
-        :class="{
-          'is-active': currentStep == FILL_RECURRENT_QUESTIONS_STEP,
-        }"
-      >
+    <li
+      class="steps-segment"
+      :class="{ 'is-active': currentStep == FILL_RECURRENT_QUESTIONS_STEP }"
+    >
+      <span class="steps-marker">
         <span class="icon">
           <i class="fa-solid fa-clipboard-question"></i>
         </span>
@@ -81,15 +93,48 @@ const nextStepSelectDonator = (user: IUser) => {
         <p class="heading">Perguntas recorrentes</p>
       </div>
     </li>
+    <li
+      class="steps-segment"
+      :class="{
+        'is-active': currentStep == SELECT_BLOOD_CENTER,
+      }"
+    >
+      <span class="steps-marker">
+        <span class="icon">
+          <i class="fa-solid fa-hospital"></i>
+        </span>
+      </span>
+      <div class="steps-content">
+        <p class="heading">Escolha o hemocentro e o horário</p>
+      </div>
+    </li>
   </ul>
   <hr class="hr" />
-  <DonationSelectDonatorStep
-    v-if="currentStep == SELECT_DONATOR_STEP"
-    @next-step-select-donator="nextStepSelectDonator"
+  <DonationSelectDonorStep
+    v-if="currentStep == SELECT_DONOR_STEP"
+    @next-step-donation="goToReviseDonorStep"
   />
-  <DonationReviseDonatorData
-    v-if="currentStep == REVISE_DONATOR_DATA && donator != null"
-    :donator="donator"
-    @previous-step-donation="currentStep = SELECT_DONATOR_STEP"
+  <DonationReviseDonorDataStep
+    v-if="currentStep == REVISE_DONOR_DATA && donor != null"
+    :donor="donor"
+    @previous-step-donation="currentStep = SELECT_DONOR_STEP"
+    @next-step-donation="currentStep = FILL_PERSONAL_QUESTIONS_STEP"
+  />
+  <DonationPersonalQuestionsStep
+    v-if="currentStep == FILL_PERSONAL_QUESTIONS_STEP && donor != null"
+    :donor="donor"
+    @previous-step-donation="backToReviseDonorStep"
+    @next-step-donation="currentStep = FILL_RECURRENT_QUESTIONS_STEP"
+  />
+  <DonationRecurrentQuestionsStep
+    v-if="currentStep == FILL_RECURRENT_QUESTIONS_STEP && donor != null"
+    :donor="donor"
+    @previous-step-donation="currentStep = FILL_PERSONAL_QUESTIONS_STEP"
+    @next-step-donation="currentStep = SELECT_BLOOD_CENTER"
+  />
+  <DonationSelectBloodCenterStep
+    v-if="currentStep == SELECT_BLOOD_CENTER && donor != null"
+    :donor="donor"
+    @previous-step-donation="currentStep = FILL_RECURRENT_QUESTIONS_STEP"
   />
 </template>

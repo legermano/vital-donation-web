@@ -9,6 +9,8 @@ export type { default as ICompletedForm } from "./ICompletedForm";
 export type { default as ICompletedQuestion } from "./ICompletedQuestion";
 export type { default as IUserFormQuestion } from "./IUserFormQuestion";
 export type { default as IBaseAutocompleteItem } from "./IBaseAutocompleteItem";
+export type { default as ISchedule } from "./ISchedule";
+export type { default as IDonation } from "./IDonation";
 export type { IBaseInput } from "./IBaseInput";
 export type { IBaseSelect } from "./IBaseSelection";
 export type { IBaseDate } from "./IBaseDate";

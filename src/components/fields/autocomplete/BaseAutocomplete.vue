@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { onClickOutside } from "@vueuse/core";
 import { BaseInput } from "@/components/fields";
-import type { IBaseAutocomplete } from "@/interfaces/IBaseAutocomplete";
 import { Field } from "vee-validate";
+import type { IBaseAutocomplete } from "@/interfaces/IBaseAutocomplete";
 
 interface IBaseAutocompleteItem {
   key: string;
@@ -15,16 +16,21 @@ const props = withDefaults(defineProps<IBaseAutocomplete>(), {
   title: "Selecione",
 });
 
+const emit = defineEmits(["optionSelected"]);
+
+const autocomplete = ref(null);
 const search = ref("");
 const showOptions = ref<boolean>(false);
 const searchOptions = ref<IBaseAutocompleteItem[]>([]);
-const selectedOption = ref();
+const selectedOption = ref(props.initialValue);
 
 let selectOptions = ref(props.options);
 
 if (props.defaultOption != undefined) {
   selectOptions.value = [props.defaultOption, ...selectOptions.value];
 }
+
+onClickOutside(autocomplete, () => (showOptions.value = false));
 
 const onChangeInput = (search: string) => {
   if (search === "") {
@@ -46,11 +52,13 @@ const selectOption = (option: { key: string; value: string }) => {
   search.value = option.value;
   showOptions.value = false;
   selectedOption.value = option.key;
+  emit("optionSelected", option.key);
 };
 </script>
 
 <template>
   <BaseInput
+    ref="autocomplete"
     :name="name"
     :horizontal="horizontal"
     :show-title="showTitle"
@@ -71,6 +79,7 @@ const selectOption = (option: { key: string; value: string }) => {
           type="text"
           placeholder="Digite aqui..."
           @input="onChangeInput(($event.target as HTMLTextAreaElement).value)"
+          @click="onChangeInput(($event.target as HTMLTextAreaElement).value)"
           v-model="search"
         />
 

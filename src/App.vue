@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
-import { NavBar, NotificationCard } from "@/components";
+import { LoaderSpinner, NavBar } from "@/components";
 </script>
 
 <template>
   <main>
     <NavBar />
-    <NotificationCard />
-    <RouterView />
+    <Suspense>
+      <RouterView />
+      <template #fallback> <LoaderSpinner /> </template>
+    </Suspense>
   </main>
 </template>

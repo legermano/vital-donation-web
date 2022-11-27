@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
-import { useNotificationStore, useUserStore } from "@/stores";
+import { useUserStore } from "@/stores";
 import { UserAutocomplete } from "@/components/fields";
-import { yup } from "@/modules";
+import { yup, useToast } from "@/modules";
 import { storeToRefs } from "pinia";
 import { LoaderSpinner } from "@/components";
 
-const emit = defineEmits(["nextStepSelectDonator"]);
+const emit = defineEmits(["nextStepDonation"]);
 
 const userStore = useUserStore();
-const notificationStore = useNotificationStore();
+const { error, warning } = useToast();
 
 const { users } = storeToRefs(userStore);
 
@@ -23,24 +23,18 @@ const { handleSubmit } = useForm<{ userId: string }>({
 
 const onSubmit = handleSubmit((data) => {
   if (data.userId === "") {
-    notificationStore.warning(
-      "Atenção!",
-      "Necessário escolher um(a) doador(a)"
-    );
+    warning("Necessário escolher um(a) doador(a)");
     return;
   }
 
   const user = users.value.find((u) => u.id === data.userId);
 
   if (!user) {
-    notificationStore.error(
-      "Erro",
-      "Não foi encontrado os dados do usuário selecionado"
-    );
+    error("Não foi encontrado os dados do usuário selecionado");
     return;
   }
 
-  emit("nextStepSelectDonator", user);
+  emit("nextStepDonation", user);
 });
 </script>
 <template>
@@ -53,7 +47,7 @@ const onSubmit = handleSubmit((data) => {
           <template #fallback> <LoaderSpinner /> </template>
         </Suspense>
         <div class="buttons is-right">
-          <button class="button is-danger is-right">Avançar</button>
+          <button class="button is-danger">Avançar</button>
         </div>
       </form>
     </div>

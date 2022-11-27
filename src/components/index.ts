@@ -1,4 +1,3 @@
-export { default as NotificationCard } from "./NotificationCard.vue";
 export { default as NavBar } from "./NavBar.vue";
 export { default as DownArrows } from "./DownArrows.vue";
 export { default as HomeBanner } from "./HomeBanner.vue";
@@ -6,6 +5,9 @@ export { default as FrequentAskedQuestions } from "./FrequentAskedQuestions.vue"
 export { default as AboutPage } from "./AboutPage.vue";
 export { default as InstitutionalFooter } from "./InstitutionalFooter.vue";
 export { default as CollapsibleCard } from "./CollapsibleCard.vue";
-export { default as DonationSelectDonatorStep } from "./DonationSelectDonatorStep.vue";
-export { default as DonationReviseDonatorData } from "./DonationReviseDonatorData.vue";
+export { default as DonationSelectDonorStep } from "./DonationSelectDonorStep.vue";
+export { default as DonationReviseDonorDataStep } from "./DonationReviseDonorDataStep.vue";
+export { default as DonationPersonalQuestionsStep } from "./DonationPersonalQuestionsStep.vue";
+export { default as DonationRecurrentQuestionsStep } from "./DonationRecurrentQuestionsStep.vue";
+export { default as DonationSelectBloodCenterStep } from "./DonationSelectBloodCenterStep.vue";
 export { default as LoaderSpinner } from "./LoaderSpinner.vue";

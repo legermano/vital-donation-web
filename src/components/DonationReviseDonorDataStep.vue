@@ -4,19 +4,20 @@ import type { IUser } from "@/interfaces";
 import type { PropType } from "vue";
 
 defineProps({
-  donator: {
+  donor: {
     type: Object as PropType<IUser>,
     required: true,
   },
 });
 
-defineEmits(["previousStepDonation"]);
+defineEmits(["previousStepDonation", "nextStepDonation"]);
 </script>
 
 <template>
   <div class="hero-body">
     <div class="container">
-      <UserEditForm :user="donator">
+      <h3 class="title has-text-centered">Dados do(a) doador(a)</h3>
+      <UserEditForm :user="donor" @user-updated="$emit('nextStepDonation')">
         <template #buttons>
           <hr class="hr" />
           <div class="buttons is-right">

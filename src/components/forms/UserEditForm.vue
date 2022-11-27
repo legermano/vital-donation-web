@@ -38,6 +38,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["userUpdated"]);
+
 const userStore = useUserStore();
 const { updateUser } = userStore;
 const {
@@ -76,8 +78,8 @@ const { handleSubmit } = useForm<IUserEdit>({
   validationSchema: schema,
 });
 
-const onSubmit = handleSubmit((data) => {
-  updateUser({
+const onSubmit = handleSubmit(async (data) => {
+  await updateUser({
     ...data,
     id: props.user.id,
     birthdate:
@@ -101,6 +103,7 @@ const onSubmit = handleSubmit((data) => {
         : undefined,
     roles: props.user.roles,
   });
+  emit("userUpdated");
 });
 </script>
 

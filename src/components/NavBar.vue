@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia";
 import { useAuthStore, useUserStore } from "@/stores";
 
 const { isLoggedIn } = storeToRefs(useAuthStore());
-const { user } = storeToRefs(useUserStore());
+const { user, isManager } = storeToRefs(useUserStore());
 const showBurger = ref(false);
 const toogleBurger = () => (showBurger.value = !showBurger.value);
 const closeBurger = () => (showBurger.value = false);
@@ -69,6 +69,7 @@ const logout = () => {
           Institucional
         </RouterLink>
         <RouterLink
+          v-if="isManager"
           to="/donation"
           class="navbar-item item-home"
           @click="closeBurger"

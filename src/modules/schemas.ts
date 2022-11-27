@@ -1,7 +1,7 @@
 import { Constants } from "@/types";
 import yup from "./yup";
 
-export default function useSchemas() {
+export const useSchemas = () => {
   const name = yup
     .string()
     .required()
@@ -67,4 +67,4 @@ export default function useSchemas() {
     weight,
     height,
   };
-}
+};

@@ -6,7 +6,7 @@ import "moment/locale/pt-br";
 
 moment.locale("pt-br");
 
-export default function useUtils() {
+export const useUtils = () => {
   const isTokenExpiredError = (error: any): boolean => {
     return (
       error instanceof AxiosError &&
@@ -41,4 +41,4 @@ export default function useUtils() {
     userHeightInMeters,
     userFormattedBirthDate,
   };
-}
+};

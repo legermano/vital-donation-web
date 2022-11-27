@@ -7,10 +7,12 @@ import { storeToRefs } from "pinia";
 // Load user data
 const userStore = useUserStore();
 const formStore = useFormStore();
-userStore.getUserInfo();
-formStore.getAllForms();
 
 const { user } = storeToRefs(userStore);
+const { userPersonalQuestionsForm } = storeToRefs(formStore);
+
+await userStore.getLoggedUser();
+await formStore.getAllForms();
 
 const PERSONAL_DATA_STEP = 1;
 const PERSONAL_QUESTIONS_STEP = 2;
@@ -58,10 +60,16 @@ const setPersonalQuestionsStep = () => (step.value = PERSONAL_QUESTIONS_STEP);
     <div class="container">
       <h3 class="title has-text-centered">Peguntas pessoais</h3>
       <hr class="hr" />
-      <UserQuestionsForm class="box" />
+      <UserQuestionsForm
+        v-if="user != null && userPersonalQuestionsForm != null"
+        :user="user"
+        :form="userPersonalQuestionsForm"
+        class="box"
+      />
     </div>
   </div>
 </template>
+
 <style scoped lang="scss">
 @import "bulma/sass/utilities/initial-variables.sass";
 $pagination-current-background-color: $red !default;
