@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { VueMaskDirective } from "v-mask";
 import { UidPlugin } from "@shimyshack/uid";
+import { setDefaults } from "bulma-toast";
 
 import App from "@/App.vue";
 import { router } from "@/router";
@@ -15,6 +16,19 @@ const vMaskV3 = {
   updated: vMaskV2.componentUpdated,
   unmounted: vMaskV2.unbind,
 };
+
+// Set default options for bulma toast
+setDefaults({
+  dismissible: true,
+  position: "top-right",
+  closeOnClick: true,
+  pauseOnHover: true,
+  animate: {
+    in: "fadeIn",
+    out: "fadeOut",
+  },
+  duration: 5000,
+});
 
 const app = createApp(App).directive("mask", vMaskV3);
 

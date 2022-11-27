@@ -1,35 +1,58 @@
-import { axios } from "@/modules";
-import { useUserStore, useNotificationStore } from "@/stores";
-import { defineStore, storeToRefs } from "pinia";
+import { axios, useToast } from "@/modules";
+import { useUserStore } from "@/stores";
+import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import type { ICompletedForm, IForm, IUserFormQuestion } from "@/interfaces";
+import type {
+  ICompletedForm,
+  IForm,
+  IUser,
+  IUserFormQuestion,
+} from "@/interfaces";
 
 export const useFormStore = defineStore("form", () => {
-  const forms = ref<Array<IForm>>();
+  const { success, warning, error } = useToast();
+  const forms = ref<IForm[]>([]);
 
-  const userPersonalQuestionsForm = computed(() => forms.value?.[0]);
+  const userPersonalQuestionsForm = computed(() =>
+    forms.value?.find((f) => f.name == "Formulário básico")
+  );
+
+  const donationRecurrentForm = computed(() =>
+    forms.value?.find((f) => f.name == "Formulário básico")
+  );
 
   const getAllForms = async (): Promise<void> => {
-    axios.get("/forms").then(({ data }) => {
+    await axios.get("/forms").then(({ data }) => {
       forms.value = data;
     });
   };
 
-  const getUserFormQuestions = (): Array<IUserFormQuestion> => {
+  /**
+   * Takes a user and an form and fill the question with the user answers
+   *
+   * @param user User to be search to find the answers
+   * @param form Form to be search to find the questions
+   *
+   * @returns Form questions with the user answers
+   */
+  const getAnswaredFormQuestions = async (
+    user: IUser,
+    form: IForm
+  ): Promise<IUserFormQuestion[]> => {
     const userStore = useUserStore();
-    const { completedForms } = userStore;
+    const { getUserCompletedForms } = userStore;
+
     const questions: Array<IUserFormQuestion> = [];
     let completedForm: ICompletedForm | null | undefined = null;
 
-    userStore.getUserCompletedForms();
-    getAllForms();
+    const userCompletedForms = await getUserCompletedForms(user);
+
+    await getAllForms();
 
     // Find the completed user form for personal questions
-    completedForm = completedForms?.find(
-      (f) => f.form.id == userPersonalQuestionsForm.value?.id
-    );
+    completedForm = userCompletedForms?.find((f) => f.form.id == form.id);
 
-    userPersonalQuestionsForm.value?.questions?.forEach((question) => {
+    form.questions?.forEach((question) => {
       const formQuestion: IUserFormQuestion = {
         id: question.id,
         question: question.question,
@@ -51,11 +74,15 @@ export const useFormStore = defineStore("form", () => {
     return questions;
   };
 
-  const setUserPersonalAnswer = async (answers: Record<string, string>) => {
+  const saveCompledForm = async (
+    answers: Record<string, string>,
+    user: IUser,
+    form: IForm
+  ): Promise<void> => {
     const userStore = useUserStore();
-    const notificationStore = useNotificationStore();
+    const { getUserCompletedForms } = userStore;
 
-    const { user, completedForms } = storeToRefs(userStore);
+    const userCompletedForms = await getUserCompletedForms(user);
 
     // Get the id from all the answerd questions
     const answerdQuestionsId = (Object.keys(answers) as Array<string>).filter(
@@ -63,30 +90,27 @@ export const useFormStore = defineStore("form", () => {
     );
 
     if (answerdQuestionsId.length <= 0) {
-      notificationStore.warning("Aviso", "Nenhum pergunta foi respondida!");
+      warning("Nenhum pergunta foi respondida!");
       return;
     }
 
     // Verify if the user already has a completed form
-    let completedForm: ICompletedForm | undefined = completedForms.value?.find(
-      (f) => f.form.id == userPersonalQuestionsForm.value?.id
+    let completedForm: ICompletedForm | undefined = userCompletedForms.find(
+      (f) => f.form.id == form.id
     );
 
     // Register the completed form for the user if it does not exits yet
     if (completedForm == undefined) {
       await axios
         .post("/forms/completed/forms", {
-          formId: userPersonalQuestionsForm.value?.id,
-          userId: user.value?.id,
+          formId: form.id,
+          userId: user.id,
         })
         .then(({ data }) => (completedForm = data));
     }
 
     if (completedForm == undefined) {
-      notificationStore.error(
-        "Erro",
-        "Ocorreu um erro ao tentar salvar as perguntas"
-      );
+      error("Ocorreu um erro ao tentar salvar as perguntas");
       return;
     }
 
@@ -106,10 +130,7 @@ export const useFormStore = defineStore("form", () => {
             observation: answers[`${key}_observation`],
           })
           .catch(() => {
-            notificationStore.error(
-              "Erro",
-              `Ocorreu um erro ao tentar gravar a pergunta ${key}`
-            );
+            error(`Ocorreu um erro ao tentar gravar a pergunta ${key}`);
           });
       }
 
@@ -126,30 +147,22 @@ export const useFormStore = defineStore("form", () => {
             observation: answers[`${key}_observation`],
           })
           .catch(() => {
-            notificationStore.error(
-              "Erro",
-              `Ocorreu um erro ao tentar atualizar a pergunta ${key}`
-            );
+            error(`Ocorreu um erro ao tentar atualizar a pergunta ${key}`);
           });
       }
     });
 
     Promise.all(questionsCall).then(() => {
-      // Update user completed forms
-      userStore.getUserCompletedForms();
-
-      notificationStore.success(
-        "Sucesso",
-        "As perguntas foram atualizadas com sucesso"
-      );
+      success("As perguntas foram atualizadas com sucesso");
     });
   };
 
   return {
     forms,
     userPersonalQuestionsForm,
+    donationRecurrentForm,
     getAllForms,
-    getUserFormQuestions,
-    setUserPersonalAnswer,
+    getAnswaredFormQuestions,
+    saveCompledForm,
   };
 });

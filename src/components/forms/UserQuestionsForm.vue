@@ -1,55 +1,61 @@
 <script setup lang="ts">
 import { QuestionCheckRadio } from "@/components/fields";
+import type { IForm, IUser } from "@/interfaces";
 import { router } from "@/router";
 import { useFormStore } from "@/stores";
 import { useForm } from "vee-validate";
+import type { PropType } from "vue";
+
+const props = defineProps({
+  user: {
+    type: Object as PropType<IUser>,
+    required: true,
+  },
+  form: {
+    type: Object as PropType<IForm>,
+    required: true,
+  },
+});
+
+const emit = defineEmits(["completedFormUpdated"]);
 
 const formStore = useFormStore();
-const { getUserFormQuestions, setUserPersonalAnswer } = formStore;
+const { saveCompledForm, getAnswaredFormQuestions } = formStore;
 
-const questions = getUserFormQuestions();
+const questions = await getAnswaredFormQuestions(props.user, props.form);
 
 const { handleSubmit } = useForm();
 
-const onSubmit = handleSubmit((data: Record<string, string>) =>
-  setUserPersonalAnswer(data)
-);
+const onSubmit = handleSubmit(async (data: Record<string, string>) => {
+  await saveCompledForm(data, props.user, props.form);
+  emit("completedFormUpdated");
+});
 </script>
+
 <template>
-  <div class="hero-body">
-    <div class="container">
-      <h3 class="title has-text-centered">Peguntas pessoais</h3>
-      <hr class="hr" />
-      <form
-        class="columns is-flex is-flex-direction-column box"
-        @submit="onSubmit"
-      >
-        <div class="level questions">
-          <div
-            v-for="question in questions"
-            :key="question.id"
-            class="level-item"
-          >
-            <QuestionCheckRadio
-              :name="question.id"
-              :title="question.question"
-              :question="question"
-            />
-          </div>
-        </div>
-        <hr class="hr" />
-        <div class="buttons">
-          <button class="button is-danger">Salvar</button>
-          <button
-            class="button is-danger is-light"
-            @click.prevent="router.back()"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
+  <form class="columns is-flex is-flex-direction-column" @submit="onSubmit">
+    <div class="level questions">
+      <div v-for="question in questions" :key="question.id" class="level-item">
+        <QuestionCheckRadio
+          :name="question.id"
+          :title="question.question"
+          :question="question"
+        />
+      </div>
     </div>
-  </div>
+    <slot name="buttons">
+      <hr class="hr" />
+      <div class="buttons">
+        <button class="button is-danger">Salvar</button>
+        <button
+          class="button is-danger is-light"
+          @click.prevent="router.back()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </slot>
+  </form>
 </template>
 
 <style scoped lang="scss">

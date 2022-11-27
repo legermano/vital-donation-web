@@ -1,6 +1,6 @@
 import { BloodType } from "@/types";
 
-export default function useValidators() {
+export const useValidators = () => {
   const validateCPF = (cpf: string): boolean => {
     if (typeof cpf !== "string") {
       return false;
@@ -82,4 +82,4 @@ export default function useValidators() {
     validatePhone,
     validateBloodType,
   };
-}
+};

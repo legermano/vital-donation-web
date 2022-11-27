@@ -2,7 +2,7 @@ import { Constants } from "@/types";
 import moment from "moment";
 import * as yup from "yup";
 import type { AnyObject, Maybe } from "yup/lib/types";
-import useValidators from "./validators";
+import { useValidators } from "@/modules";
 
 const { validateCPF, validatePassword, validatePhone, validateBloodType } =
   useValidators();

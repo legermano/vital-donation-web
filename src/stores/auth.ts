@@ -2,11 +2,13 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import { useStorage } from "@vueuse/core";
 import { router } from "@/router";
-import { useNotificationStore, useUserStore } from "@/stores";
+import { useUserStore } from "@/stores";
+import { useToast } from "@/modules";
 import axios, { AxiosError } from "axios";
 import type { IAuth } from "@/interfaces";
 
 export const useAuthStore = defineStore("auth", () => {
+  const { error } = useToast();
   // Store JWT token and refresh in local storage to keep user logged in between page refreshes
   const auth = useStorage<IAuth | null>("auth", {} as IAuth);
   const returnUrl = ref<string | null>();
@@ -25,29 +27,27 @@ export const useAuthStore = defineStore("auth", () => {
         },
       })
       .then(({ data }) => {
-        useUserStore().getUserInfo();
         // Update pinia state
         auth.value = data;
+
+        useUserStore().getLoggedUser();
 
         // Redirect to previous URL or Default to home page
         const oldReturnUrl = returnUrl.value;
         returnUrl.value = null;
         router.push(oldReturnUrl || "/");
       })
-      .catch((error) => {
-        if (error instanceof Error) {
-          const notificationStore = useNotificationStore();
-
-          if (error instanceof AxiosError && error.response?.status == 403) {
-            notificationStore.error(
-              "Erro ao logar!",
-              "Certifique-se que digitou corretamente seu CPF e senha."
+      .catch((err) => {
+        if (err instanceof Error) {
+          if (err instanceof AxiosError && err.response?.status == 403) {
+            error(
+              "Erro ao logar! Certifique-se que digitou corretamente seu CPF e senha."
             );
 
             return;
           }
 
-          notificationStore.error("Erro ao logar!", error.message);
+          error(`Erro ao logar! ${err.message}`);
         }
       });
   };

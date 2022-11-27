@@ -1,40 +1,16 @@
 import { useStorage } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { axios, useUtils } from "@/modules";
+import { axios, useUtils, useToast } from "@/modules";
 import { router } from "@/router";
 import { AxiosError } from "axios";
-import { useNotificationStore } from "@/stores";
-import { computed, ref } from "vue";
-import { Constants } from "@/types";
-import moment from "moment";
-import "moment/locale/pt-br";
+import { ref, computed } from "vue";
 import type { ICompletedForm, IUser } from "@/interfaces";
-
-moment.locale("pt-br");
 
 export const useUserStore = defineStore("user", () => {
   const user = useStorage<IUser | null>("user", {} as IUser);
   const completedForms = ref<Array<ICompletedForm> | null>(null);
-
-  const formattedBirthDate = computed(() => {
-    if (user.value?.birthdate == null) return null;
-
-    return moment(user.value.birthdate, Constants.backendDateFormat).format(
-      Constants.frontendDateFormat
-    );
-  });
-
-  const weightInKilos = computed(() => {
-    if (user.value?.weight == null) return;
-
-    return user.value.weight.toFixed(2);
-  });
-
-  const heightInMeters = computed(() => {
-    if (user.value?.height == null) return;
-
-    return user.value.height.toFixed(2);
-  });
+  const users = ref<IUser[]>([]);
+  const { success, error } = useToast();
 
   const createUser = (
     name: string,
@@ -45,58 +21,39 @@ export const useUserStore = defineStore("user", () => {
     axios
       .post("/users", { name, cpf, email, password })
       .then(() => {
-        useNotificationStore().success(
-          "Usuário criado",
-          "Usuário criado com sucesso!"
-        );
+        success("Usuário criado com sucesso!");
         router.push("/account/login");
       })
-      .catch((error) => {
-        const notificationStore = useNotificationStore();
-
+      .catch((err) => {
         if (
-          error instanceof AxiosError &&
-          error.response?.status == 403 &&
-          error.message.includes("already exists")
+          err instanceof AxiosError &&
+          err.response?.status == 403 &&
+          err.message.includes("already exists")
         ) {
-          notificationStore.error(
-            "Erro ao criar uma nova conta",
-            "Já existe um usuário cadastrado para esse CPF!"
-          );
+          error("Já existe um usuário cadastrado para esse CPF!");
 
           return;
         }
 
-        if (!useUtils().isTokenExpiredError(error)) {
-          notificationStore.error(
-            "Erro ao criar uma nova conta",
-            error.message
-          );
+        if (!useUtils().isTokenExpiredError(err)) {
+          error(`Erro ao criar uma nova conta: ${err.message}`);
         }
       });
   };
 
-  const updateUser = (user: IUser): void => {
+  const updateUser = async (user: IUser): Promise<void> => {
     axios
       .put(`/users/${user.id}`, user)
       .then(() => {
-        useNotificationStore().success(
-          "Dados atualizados!",
-          "Dados atualizados com sucesso!"
-        );
-
-        getUserInfo();
+        success("Dados atualizados com sucesso!");
       })
-      .catch((error) => {
-        const notificationStore = useNotificationStore();
-
+      .catch((err) => {
         if (
-          error instanceof AxiosError &&
-          error.response?.status == 404 &&
-          error.message.includes("user not found")
+          err instanceof AxiosError &&
+          err.response?.status == 404 &&
+          err.message.includes("user not found")
         ) {
-          notificationStore.error(
-            "Usuário não encontrado",
+          error(
             "Não foi possível encontrar o usuário para atualizar os dados. Tente relogar na aplicação!"
           );
 
@@ -104,36 +61,66 @@ export const useUserStore = defineStore("user", () => {
         }
 
         if (!useUtils().isTokenExpiredError(error)) {
-          notificationStore.error("Error ao atualizar dados", error.message);
+          error(`Erro ao atualizar dados: ${err.message}`);
         }
       });
   };
 
-  const getUserInfo = () => {
-    axios.get("/users").then(({ data }) => {
+  const getLoggedUser = async () => {
+    axios.get("/users").then(async ({ data }) => {
       user.value = data;
-      getUserCompletedForms();
+
+      if (user.value != null) {
+        completedForms.value = await getUserCompletedForms(user.value);
+      }
     });
+  };
+
+  const getAllUsers = async (): Promise<void> => {
+    await axios.get("/users/list").then(({ data }) => (users.value = data));
+  };
+
+  const getUser = async (id: string): Promise<IUser> => {
+    return await axios.get(`/users/${id}`).then(({ data }) => data as IUser);
   };
 
   const cleanUserInfo = () => (user.value = null);
 
-  const getUserCompletedForms = () => {
-    axios
-      .get(`/forms/completed/forms/user/${user.value?.id}`)
-      .then(({ data }) => (completedForms.value = data));
+  const getUserCompletedForms = async (
+    user: IUser
+  ): Promise<ICompletedForm[]> => {
+    return await axios
+      .get(`/forms/completed/forms/user/${user.id}`)
+      .then(({ data }) => data as ICompletedForm[]);
   };
+
+  const isSuperUser = computed(() =>
+    user.value?.roles?.some((r) => r.name == "SUPER_USER")
+  );
+
+  const isAdmin = computed(() =>
+    user.value?.roles?.some((r) => r.name == "ADMIN" || r.name == "SUPER_USER")
+  );
+
+  const isManager = computed(() =>
+    user.value?.roles?.some(
+      (r) => r.name == "MANAGER" || r.name == "ADMIN" || r.name == "SUPER_USER"
+    )
+  );
 
   return {
     user,
+    isAdmin,
+    isManager,
+    isSuperUser,
+    users,
     completedForms,
-    formattedBirthDate,
-    weightInKilos,
-    heightInMeters,
     createUser,
-    getUserInfo,
+    getLoggedUser,
     cleanUserInfo,
     updateUser,
     getUserCompletedForms,
+    getAllUsers,
+    getUser,
   };
 });
