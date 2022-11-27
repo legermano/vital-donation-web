@@ -7,10 +7,30 @@ import type { IBloodBag } from "@/interfaces";
 export const useDonationStore = defineStore("donation", () => {
   const { success, error } = useToast();
 
-  const getUserDonations = async (userId: string): Promise<IDonation[]> => {
-    return await axios.get<IDonation[]>("/donations").then(({ data }) => {
-      return data.filter((d) => d.donor.id === userId);
-    });
+  const getAllDonations = async (): Promise<IDonation[] | void> => {
+    return await axios
+      .get<IDonation[]>("/donations")
+      .then(({ data }) => data)
+      .catch((err) => {
+        if (!useUtils().isTokenExpiredError(error)) {
+          error(`Erro ao buscar as doações: ${err.message}`);
+        }
+      });
+  };
+
+  const getUserDonations = async (
+    userId: string
+  ): Promise<IDonation[] | void> => {
+    return await axios
+      .get<IDonation[]>("/donations")
+      .then(({ data }) => {
+        return data.filter((d) => d.donor.id === userId);
+      })
+      .catch((err) => {
+        if (!useUtils().isTokenExpiredError(error)) {
+          error(`Erro ao buscar as doações: ${err.message}`);
+        }
+      });
   };
 
   const createDonation = async (
@@ -73,6 +93,7 @@ export const useDonationStore = defineStore("donation", () => {
   };
 
   return {
+    getAllDonations,
     getUserDonations,
     createDonation,
     updateDonation,

@@ -75,7 +75,7 @@ const logout = () => {
         </RouterLink>
         <RouterLink
           v-if="isManager"
-          to="/donation/new"
+          to="/donation/list"
           class="navbar-item item-home"
         >
           Doações
