@@ -13,4 +13,6 @@ export interface IBaseInput {
   mode?: InteractionMode;
   initialValue?: string | number | null;
   useFieldType?: string;
+  readonly?: boolean;
+  disabled?: boolean;
 }

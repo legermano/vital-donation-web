@@ -4,8 +4,13 @@ import * as yup from "yup";
 import type { AnyObject, Maybe } from "yup/lib/types";
 import { useValidators } from "@/modules";
 
-const { validateCPF, validatePassword, validatePhone, validateBloodType } =
-  useValidators();
+const {
+  validateCPF,
+  validatePassword,
+  validatePhone,
+  validateBloodType,
+  validateDonationStatus,
+} = useValidators();
 
 const formatDate = (date: string | Date, format: string) => {
   return moment(date).format(format);
@@ -94,6 +99,21 @@ yup.addMethod<yup.StringSchema>(
   }
 );
 
+yup.addMethod<yup.StringSchema>(
+  yup.string,
+  "donationstatus",
+  function (message?: string) {
+    const msg = message ?? "Status da doação inválido";
+    return this.test("donationstatus", msg, function (donationStatus) {
+      if (donationStatus == undefined) {
+        return false;
+      }
+
+      return validateDonationStatus(donationStatus);
+    });
+  }
+);
+
 yup.addMethod<yup.DateSchema>(
   yup.date,
   "format",
@@ -120,6 +140,7 @@ declare module "yup" {
     password(message?: string): StringSchema<TType, TContext>;
     phone(message?: string): StringSchema<TType, TContext>;
     bloodtype(message?: string): StringSchema<TType, TContext>;
+    donationstatus(message?: string): StringSchema<TType, TContext>;
   }
 
   interface DateSchema<

@@ -7,6 +7,19 @@ import type { IBloodBag } from "@/interfaces";
 export const useDonationStore = defineStore("donation", () => {
   const { success, error } = useToast();
 
+  const getDonation = async (donationId: string): Promise<IDonation | void> => {
+    return await axios
+      .get<IDonation>(`/donations/${donationId}`)
+      .then(({ data }) => data)
+      .catch((err) => {
+        if (!useUtils().isTokenExpiredError(error)) {
+          error(
+            `Erro ao buscar a doação de código ${donationId}: ${err.message}`
+          );
+        }
+      });
+  };
+
   const getAllDonations = async (): Promise<IDonation[] | void> => {
     return await axios
       .get<IDonation[]>("/donations")
@@ -62,7 +75,7 @@ export const useDonationStore = defineStore("donation", () => {
     status: string
   ): Promise<void> => {
     await axios
-      .put("/donations", {
+      .put(`/donations/${donationId}`, {
         id: donationId,
         donorId,
         hemocenterId: bloodCenterId,
@@ -93,6 +106,7 @@ export const useDonationStore = defineStore("donation", () => {
   };
 
   return {
+    getDonation,
     getAllDonations,
     getUserDonations,
     createDonation,

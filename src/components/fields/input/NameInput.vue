@@ -18,6 +18,8 @@ withDefaults(defineProps<IBaseInput>(), {
     :show-title="showTitle"
     :title="title"
     :initial-value="initialValue"
+    :readonly="readonly"
+    :disabled="disabled"
     icon-class="fas fa-user"
   />
 </template>
