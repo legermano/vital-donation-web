@@ -7,10 +7,43 @@ import type { IBloodBag } from "@/interfaces";
 export const useDonationStore = defineStore("donation", () => {
   const { success, error } = useToast();
 
-  const getUserDonations = async (userId: string): Promise<IDonation[]> => {
-    return await axios.get<IDonation[]>("/donations").then(({ data }) => {
-      return data.filter((d) => d.donor.id === userId);
-    });
+  const getDonation = async (donationId: string): Promise<IDonation | void> => {
+    return await axios
+      .get<IDonation>(`/donations/${donationId}`)
+      .then(({ data }) => data)
+      .catch((err) => {
+        if (!useUtils().isTokenExpiredError(error)) {
+          error(
+            `Erro ao buscar a doação de código ${donationId}: ${err.message}`
+          );
+        }
+      });
+  };
+
+  const getAllDonations = async (): Promise<IDonation[] | void> => {
+    return await axios
+      .get<IDonation[]>("/donations")
+      .then(({ data }) => data)
+      .catch((err) => {
+        if (!useUtils().isTokenExpiredError(error)) {
+          error(`Erro ao buscar as doações: ${err.message}`);
+        }
+      });
+  };
+
+  const getUserDonations = async (
+    userId: string
+  ): Promise<IDonation[] | void> => {
+    return await axios
+      .get<IDonation[]>("/donations")
+      .then(({ data }) => {
+        return data.filter((d) => d.donor.id === userId);
+      })
+      .catch((err) => {
+        if (!useUtils().isTokenExpiredError(error)) {
+          error(`Erro ao buscar as doações: ${err.message}`);
+        }
+      });
   };
 
   const createDonation = async (
@@ -42,7 +75,7 @@ export const useDonationStore = defineStore("donation", () => {
     status: string
   ): Promise<void> => {
     await axios
-      .put("/donations", {
+      .put(`/donations/${donationId}`, {
         id: donationId,
         donorId,
         hemocenterId: bloodCenterId,
@@ -73,6 +106,8 @@ export const useDonationStore = defineStore("donation", () => {
   };
 
   return {
+    getDonation,
+    getAllDonations,
     getUserDonations,
     createDonation,
     updateDonation,

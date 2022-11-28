@@ -1,4 +1,4 @@
-import { BloodType } from "@/types";
+import { BloodType, DonationStatus } from "@/types";
 
 export const useValidators = () => {
   const validateCPF = (cpf: string): boolean => {
@@ -76,10 +76,16 @@ export const useValidators = () => {
     return bloodType in BloodType;
   };
 
+  const validateDonationStatus = (donationStatus: string): boolean => {
+    const values: string[] = Object.values(DonationStatus);
+    return values.includes(donationStatus);
+  };
+
   return {
     validateCPF,
     validatePassword,
     validatePhone,
     validateBloodType,
+    validateDonationStatus,
   };
 };

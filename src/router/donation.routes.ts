@@ -1,4 +1,9 @@
-import { NewDonationView, UserDonationsView } from "@/views/donation";
+import {
+  DonationsListView,
+  EditDonationView,
+  NewDonationView,
+  UserDonationsView,
+} from "@/views/donation";
 
 export default {
   path: "/donation",
@@ -12,8 +17,17 @@ export default {
       component: UserDonationsView,
     },
     {
+      path: "list",
+      component: DonationsListView,
+    },
+    {
       path: "new",
       component: NewDonationView,
+    },
+    {
+      path: "edit/:donationId",
+      component: EditDonationView,
+      props: true,
     },
   ],
 };

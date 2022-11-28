@@ -17,6 +17,8 @@ const props = withDefaults(defineProps<IBaseInput>(), {
   type: "text",
   mask: "",
   mode: InteractionMode.LAZY,
+  readonly: false,
+  disabled: false,
 });
 
 const { meta, value, errorMessage, handleChange, handleBlur } = useField(
@@ -83,6 +85,8 @@ const handlers = computed(() => {
           >
             <input
               class="input"
+              :readonly="readonly"
+              :disabled="disabled"
               :type="type"
               :placeholder="title"
               :class="{ 'is-danger': errorMessage }"

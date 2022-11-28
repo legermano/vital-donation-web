@@ -48,8 +48,6 @@ const getSchedule = (dayOfWeek: string) => {
 };
 
 const onSubmit = handleSubmit(async (data) => {
-  console.log(data);
-
   if (data.bloodCenterId === "") {
     warning("Necessário escolher um hemocentro");
     return;
@@ -67,7 +65,7 @@ const onSubmit = handleSubmit(async (data) => {
       Constants.backendDateTimeFormat
     ),
     DonationStatus.SCHEDULED
-  ).then(() => router.push("/"));
+  ).then(() => router.push("/donation/list"));
 });
 </script>
 

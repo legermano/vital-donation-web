@@ -6,12 +6,12 @@ import { Constants } from "@/types";
 import { onClickOutside } from "@vueuse/core";
 import type { IDonation, IUser, IBloodBag } from "@/interfaces";
 
-const { getDonationBloodBags, getUserDonations } = useDonationStore();
+const { getDonationBloodBags, getUserDonations, getAllDonations } =
+  useDonationStore();
 
 const props = defineProps({
   user: {
     type: Object as PropType<IUser>,
-    required: true,
   },
   enableEdit: {
     type: Boolean,
@@ -23,10 +23,19 @@ const props = defineProps({
   },
 });
 
-const donations: IDonation[] = await getUserDonations(props.user.id);
 const isModalOpen = ref<Boolean>(false);
 const bloodBags = ref<IBloodBag[]>([]);
 const modal = ref(null);
+
+let donations: IDonation[] = [];
+
+if (props.user) {
+  const donationsResponse = await getUserDonations(props.user.id);
+  donations = donationsResponse ? donationsResponse : [];
+} else {
+  const donationsResponse = await getAllDonations();
+  donations = donationsResponse ? donationsResponse : [];
+}
 
 onClickOutside(modal, () => (isModalOpen.value = false));
 
@@ -56,7 +65,11 @@ const openBloodBagModal = async (donationId: string) => {
       <tbody>
         <tr v-for="donation in donations" :key="donation.id">
           <td v-if="enableEdit" class="has-text-centered">
-            <RouterLink to="/user/edit">
+            <RouterLink
+              :to="{
+                path: `/donation/edit/${donation.id}`,
+              }"
+            >
               <span class="icon has-text-danger">
                 <i class="fas fa-pencil"></i>
               </span>
