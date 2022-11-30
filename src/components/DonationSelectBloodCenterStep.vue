@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { BloodCenterAutocomplete, DateTimePicker } from "@/components/fields";
+import {
+  BloodCenterAutocomplete,
+  DateTimePicker,
+  DonationStatusSelect,
+} from "@/components/fields";
 import { LoaderSpinner } from "@/components";
 import { useForm } from "vee-validate";
-import { yup, useToast } from "@/modules";
+import { yup, useToast, useSchemas } from "@/modules";
 import { ref, type PropType } from "vue";
 import { useDonationStore } from "@/stores";
 import moment from "moment";
@@ -25,9 +29,14 @@ const { createDonation } = useDonationStore();
 const schema = yup.object({
   bloodCenterId: yup.string().label("Hemocentro"),
   schedule: yup.string().label("Horário"),
+  status: useSchemas().donationStatus,
 });
 
-const { handleSubmit } = useForm<{ bloodCenterId: string; schedule: string }>({
+const { handleSubmit } = useForm<{
+  bloodCenterId: string;
+  schedule: string;
+  status: string;
+}>({
   validationSchema: schema,
 });
 const bloodCenterSchedules = ref<ISchedule[] | null>(null);
@@ -64,7 +73,7 @@ const onSubmit = handleSubmit(async (data) => {
     moment(data.schedule, Constants.frontendDateTimeFormat).format(
       Constants.backendDateTimeFormat
     ),
-    DonationStatus.SCHEDULED
+    data.status
   ).then(() => router.push("/donation/list"));
 });
 </script>
@@ -92,12 +101,22 @@ const onSubmit = handleSubmit(async (data) => {
               <li>Domingo : {{ getSchedule("SUNDAY") }}</li>
             </ul>
           </div>
-          <DateTimePicker
-            v-if="bloodCenterSchedules != null"
-            name="schedule"
-            :show-title="false"
-            title="Horário da doação"
-          />
+          <div class="level">
+            <div class="level-item">
+              <DateTimePicker
+                v-if="bloodCenterSchedules != null"
+                name="schedule"
+                title="Horário da doação"
+              />
+            </div>
+            <div class="level-item">
+              <DonationStatusSelect
+                v-if="bloodCenterSchedules != null"
+                name="status"
+                :initial-value="DonationStatus.SCHEDULED"
+              />
+            </div>
+          </div>
           <div class="buttons is-right">
             <button
               class="button is-danger is-light"
@@ -113,3 +132,27 @@ const onSubmit = handleSubmit(async (data) => {
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.level {
+  align-items: flex-start;
+
+  .level-item {
+    flex-shrink: 1;
+    .field {
+      flex: 1;
+    }
+  }
+
+  @include tablet {
+    .level-item:not(:last-child) {
+      margin-right: 0.75rem;
+      max-width: calc(50% - 0.75rem);
+    }
+
+    .level-item:last-child {
+      max-width: calc(50%);
+    }
+  }
+}
+</style>

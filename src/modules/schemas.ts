@@ -23,13 +23,15 @@ export const useSchemas = () => {
     .default(null)
     .label("Data de nascimento")
     .nullable();
-  const schedule = yup
+  const datetime = yup
     .date()
     .format(Constants.frontendDateTimeFormat)
-    .min(new Date(1900, 0, 1))
-    .label("Data da doação");
+    .required();
   const bloodType = yup.string().bloodtype().nullable();
-  const donationStatus = yup.string().donationstatus();
+  const donationStatus = yup
+    .string()
+    .donationstatus()
+    .label("Status da doação");
   const address = yup
     .string()
     .min(5)
@@ -67,7 +69,7 @@ export const useSchemas = () => {
     requiredString,
     phone,
     birthDate,
-    schedule,
+    datetime,
     bloodType,
     donationStatus,
     address,

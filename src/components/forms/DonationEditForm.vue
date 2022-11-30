@@ -36,10 +36,10 @@ const formattedDonationDate = moment(
   Constants.backendDateTimeFormat
 ).format(Constants.frontendDateTimeFormat);
 
-const { donationStatus, schedule } = useSchemas();
+const { donationStatus, datetime } = useSchemas();
 const schema = yup.object({
   status: donationStatus,
-  schedule,
+  schedule: datetime.label("Data da doação"),
 });
 
 const { handleSubmit } = useForm<IDonationEdit>({
