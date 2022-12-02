@@ -80,6 +80,13 @@ const logout = () => {
         >
           Doações
         </RouterLink>
+        <RouterLink
+          v-if="isManager"
+          to="/user/list"
+          class="navbar-item item-home"
+        >
+          Usuários
+        </RouterLink>
       </div>
 
       <div class="navbar-end">
@@ -109,7 +116,12 @@ const logout = () => {
             </div>
           </a>
           <div class="navbar-dropdown">
-            <RouterLink to="/user/edit" class="navbar-item">
+            <RouterLink
+              :to="{
+                path: `/user/edit/${user?.id}`,
+              }"
+              class="navbar-item"
+            >
               <span class="columns is-centered icon-text">
                 <span class="column icon">
                   <i class="fas fa-pencil"></i>

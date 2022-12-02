@@ -14,9 +14,15 @@ export const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/user/edit",
+      path: "/user/list",
+      name: "user list",
+      component: () => import("@/views/ListUserView.vue"),
+    },
+    {
+      path: "/user/edit/:userId",
       name: "user",
       component: () => import("@/views/EditUserView.vue"),
+      props: true,
     },
     { ...accountRoutes },
     { ...donationRoutes },

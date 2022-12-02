@@ -3,15 +3,23 @@ import { UserEditForm, UserQuestionsForm } from "@/components/forms";
 import { ref } from "vue";
 import { useUserStore, useFormStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import type { IUser } from "@/interfaces";
+
+const props = defineProps({
+  userId: {
+    type: String,
+    required: true,
+  },
+});
 
 // Load user data
 const userStore = useUserStore();
 const formStore = useFormStore();
 
-const { user } = storeToRefs(userStore);
 const { userPersonalQuestionsForm } = storeToRefs(formStore);
 
-await userStore.getLoggedUser();
+const editUser: IUser = await userStore.getUser(props.userId);
+
 await formStore.getAllForms();
 
 const PERSONAL_DATA_STEP = 1;
@@ -53,7 +61,7 @@ const setPersonalQuestionsStep = () => (step.value = PERSONAL_QUESTIONS_STEP);
     <div class="container">
       <h3 class="title has-text-centered">Dados pessoais</h3>
       <hr class="hr" />
-      <UserEditForm v-if="user != null" :user="user" class="box" />
+      <UserEditForm v-if="editUser != null" :user="editUser" class="box" />
     </div>
   </div>
   <div class="hero-body" v-if="step == PERSONAL_QUESTIONS_STEP">
@@ -61,8 +69,8 @@ const setPersonalQuestionsStep = () => (step.value = PERSONAL_QUESTIONS_STEP);
       <h3 class="title has-text-centered">Peguntas pessoais</h3>
       <hr class="hr" />
       <UserQuestionsForm
-        v-if="user != null && userPersonalQuestionsForm != null"
-        :user="user"
+        v-if="editUser != null && userPersonalQuestionsForm != null"
+        :user="editUser"
         :form="userPersonalQuestionsForm"
         class="box"
       />

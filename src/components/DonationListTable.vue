@@ -72,7 +72,7 @@ const openBloodBagModalForm = async (donationId: string, donorId: string) => {
       <thead>
         <tr>
           <th v-if="enableEdit"></th>
-          <th></th>
+          <th v-if="enableEdit"></th>
           <th v-if="showDonor">Doador(a)</th>
           <th>Data da doação</th>
           <th>Hemocentro</th>
