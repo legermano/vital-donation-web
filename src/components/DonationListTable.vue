@@ -47,11 +47,6 @@ onClickOutside(
   () => (isBloodBagViewModalOpen.value = false)
 );
 
-onClickOutside(
-  bloodBagFormModal,
-  () => (isBloodBagFormModalOpen.value = false)
-);
-
 const openBloodBagModalView = async (donationId: string) => {
   const response = await getDonationBloodBags(donationId);
 
@@ -185,7 +180,10 @@ const openBloodBagModalForm = async (donationId: string, donorId: string) => {
   </div>
 
   <div class="modal is-active" v-if="isBloodBagFormModalOpen">
-    <div class="modal-background"></div>
+    <div
+      class="modal-background"
+      @click="isBloodBagFormModalOpen = false"
+    ></div>
     <div ref="bloodBagFormModal" class="modal-card modal-bloodbag-form">
       <header class="modal-card-head">
         <p class="modal-card-title">Cadastrar bolsas de sangue</p>

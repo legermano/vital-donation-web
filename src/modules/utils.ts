@@ -33,9 +33,15 @@ export const useUtils = () => {
     );
   };
 
-  const formatDatetime = (datetime: string) => {
+  const formatDatetimeToFront = (datetime: string) => {
     return moment(datetime, Constants.backendDateTimeFormat).format(
       Constants.frontendDateTimeFormat
+    );
+  };
+
+  const formatDatetimeToBack = (datetime: string) => {
+    return moment(datetime, Constants.frontendDateTimeFormat).format(
+      Constants.backendDateTimeFormat
     );
   };
 
@@ -44,6 +50,7 @@ export const useUtils = () => {
     userWeightInKilos,
     userHeightInMeters,
     formatDate,
-    formatDatetime,
+    formatDatetimeToFront,
+    formatDatetimeToBack,
   };
 };

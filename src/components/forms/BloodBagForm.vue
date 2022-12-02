@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { IBloodBag, IUser } from "@/interfaces";
+import type { IBloodBag, IDonation, IUser } from "@/interfaces";
 import type { PropType } from "vue";
 import { FieldArray, useForm } from "vee-validate";
 import { BloodType } from "@/types";
 import { BaseInput, DateTimePicker } from "@/components/fields";
-import { useUserStore } from "@/stores";
+import { useUserStore, useDonationStore } from "@/stores";
 import { useSchemas, useUtils, yup } from "@/modules";
 
 interface IBloodBagForm {
@@ -27,8 +27,11 @@ const props = defineProps({
 });
 
 const userStore = useUserStore();
+const donationStore = useDonationStore();
 const user: IUser = await userStore.getUser(props.donorId);
-const { formatDatetime } = useUtils();
+const donation: IDonation = await donationStore.getDonation(props.donationId);
+
+const { formatDatetimeToFront, formatDatetimeToBack } = useUtils();
 const { requiredString } = useSchemas();
 const schema = yup.object().shape({
   bloodBags: yup
@@ -36,7 +39,7 @@ const schema = yup.object().shape({
     .of(
       yup.object().shape({
         code: requiredString.label("Código"),
-        volume: requiredString.label("Volume"),
+        volume: yup.number().required().label("Volume"),
         date: requiredString.label("Data"),
       })
     )
@@ -58,13 +61,13 @@ if (props.bloodBag.length == 0) {
   });
 } else {
   props.bloodBag.forEach((b) => {
-    b.date = formatDatetime(b.date);
+    b.date = formatDatetimeToFront(b.date);
     initialData.bloodBags.push(b);
   });
 }
 
 const { handleSubmit } = useForm<IBloodBagForm>({
-  validationSchema: schema,
+  // validationSchema: schema,
   initialValues: initialData,
 });
 
@@ -72,8 +75,22 @@ const deleteBloodBag = (idx: number) => {
   console.log(initialData.bloodBags[idx]);
 };
 
-const onSubmit = handleSubmit((data) => {
-  console.log(data);
+const onSubmit = handleSubmit((data: IBloodBagForm) => {
+  data.bloodBags.forEach((b) => {
+    const date = formatDatetimeToBack(b.date);
+    if (b.id) {
+      donationStore.updateDonationBloodBag(b.id, b.code, date, b.volume);
+    } else {
+      donationStore.createDonationBloodBag(
+        donation.hemocenter.id,
+        donation.id,
+        b.code,
+        formatDatetimeToBack(b.date),
+        b.volume,
+        b.bloodType
+      );
+    }
+  });
 });
 </script>
 
