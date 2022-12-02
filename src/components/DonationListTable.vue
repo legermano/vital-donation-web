@@ -4,6 +4,7 @@ import { ref, type PropType } from "vue";
 import { useDonationStore } from "@/stores";
 import { Constants } from "@/types";
 import { onClickOutside } from "@vueuse/core";
+import { BloodBagForm } from "@/components/forms";
 import type { IDonation, IUser, IBloodBag } from "@/interfaces";
 
 const { getDonationBloodBags, getUserDonations, getAllDonations } =
@@ -23,9 +24,13 @@ const props = defineProps({
   },
 });
 
-const isModalOpen = ref<Boolean>(false);
+const isBloodBagViewModalOpen = ref<Boolean>(false);
+const isBloodBagFormModalOpen = ref<Boolean>(false);
 const bloodBags = ref<IBloodBag[]>([]);
-const modal = ref(null);
+const donation = ref<string>("");
+const donor = ref<string>("");
+const bloodBagViewModal = ref(null);
+const bloodBagFormModal = ref(null);
 
 let donations: IDonation[] = [];
 
@@ -37,13 +42,25 @@ if (props.user) {
   donations = donationsResponse ? donationsResponse : [];
 }
 
-onClickOutside(modal, () => (isModalOpen.value = false));
+onClickOutside(
+  bloodBagViewModal,
+  () => (isBloodBagViewModalOpen.value = false)
+);
 
-const openBloodBagModal = async (donationId: string) => {
+const openBloodBagModalView = async (donationId: string) => {
   const response = await getDonationBloodBags(donationId);
 
   bloodBags.value = response ? response : [];
-  isModalOpen.value = true;
+  isBloodBagViewModalOpen.value = true;
+};
+
+const openBloodBagModalForm = async (donationId: string, donorId: string) => {
+  const response = await getDonationBloodBags(donationId);
+
+  donation.value = donationId;
+  donor.value = donorId;
+  bloodBags.value = response ? response : [];
+  isBloodBagFormModalOpen.value = true;
 };
 </script>
 
@@ -55,6 +72,7 @@ const openBloodBagModal = async (donationId: string) => {
       <thead>
         <tr>
           <th v-if="enableEdit"></th>
+          <th></th>
           <th v-if="showDonor">Doador(a)</th>
           <th>Data da doação</th>
           <th>Hemocentro</th>
@@ -64,7 +82,7 @@ const openBloodBagModal = async (donationId: string) => {
       </thead>
       <tbody>
         <tr v-for="donation in donations" :key="donation.id">
-          <td v-if="enableEdit" class="has-text-centered">
+          <td v-if="enableEdit" class="has-text-centered" title="Editar doação">
             <RouterLink
               :to="{
                 path: `/donation/edit/${donation.id}`,
@@ -74,6 +92,17 @@ const openBloodBagModal = async (donationId: string) => {
                 <i class="fas fa-pencil"></i>
               </span>
             </RouterLink>
+          </td>
+          <td
+            v-if="enableEdit"
+            class="has-text-centered"
+            title="Adicionar bolsas de sangue"
+          >
+            <a @click="openBloodBagModalForm(donation.id, donation.donor.id)">
+              <span class="icon has-text-danger">
+                <i class="fa-solid fa-hand-holding-droplet"></i>
+              </span>
+            </a>
           </td>
           <td v-if="showDonor">{{ donation.donor.name }}</td>
           <td>
@@ -86,7 +115,7 @@ const openBloodBagModal = async (donationId: string) => {
           <td>{{ donation.hemocenter.name }}</td>
           <td>{{ donation.status }}</td>
           <td class="has-text-centered" title="Visualizar as bolsas de sangue">
-            <a @click="openBloodBagModal(donation.id)">
+            <a @click="openBloodBagModalView(donation.id)">
               <span class="icon has-text-danger">
                 <i class="fa-solid fa-eye"></i>
               </span>
@@ -96,20 +125,21 @@ const openBloodBagModal = async (donationId: string) => {
       </tbody>
     </table>
   </div>
+
   <div
     class="modal"
     :class="{
-      'is-active': isModalOpen,
+      'is-active': isBloodBagViewModalOpen,
     }"
   >
     <div class="modal-background"></div>
-    <div ref="modal" class="modal-card">
+    <div ref="bloodBagViewModal" class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">Bolsas de sangue</p>
         <button
           class="delete"
           aria-label="close"
-          @click="isModalOpen = false"
+          @click="isBloodBagViewModalOpen = false"
         ></button>
       </header>
       <section class="modal-card-body">
@@ -148,4 +178,34 @@ const openBloodBagModal = async (donationId: string) => {
       </section>
     </div>
   </div>
+
+  <div class="modal is-active" v-if="isBloodBagFormModalOpen">
+    <div
+      class="modal-background"
+      @click="isBloodBagFormModalOpen = false"
+    ></div>
+    <div ref="bloodBagFormModal" class="modal-card modal-bloodbag-form">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Cadastrar bolsas de sangue</p>
+        <button
+          class="delete"
+          aria-label="close"
+          @click="isBloodBagFormModalOpen = false"
+        ></button>
+      </header>
+      <section class="modal-card-body">
+        <BloodBagForm
+          :donation-id="donation"
+          :donor-id="donor"
+          :blood-bag="bloodBags"
+        />
+      </section>
+    </div>
+  </div>
 </template>
+
+<style scoped lang="scss">
+.modal-bloodbag-form {
+  width: auto !important;
+}
+</style>

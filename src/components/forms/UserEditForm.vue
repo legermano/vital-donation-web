@@ -54,12 +54,13 @@ const {
   weight,
   height,
 } = useSchemas();
-const { userFormattedBirthDate, userHeightInMeters, userWeightInKilos } =
-  useUtils();
+const { formatDate, userHeightInMeters, userWeightInKilos } = useUtils();
 
 const formmatedWeight = userWeightInKilos(props.user)?.replace(".", ",");
 const formmatedHeight = userHeightInMeters(props.user)?.replace(".", ",");
-const formattedBirthDate = userFormattedBirthDate(props.user);
+const formattedBirthDate = props.user.birthdate
+  ? formatDate(props.user.birthdate)
+  : null;
 
 const schema = yup.object({
   name,

@@ -3,21 +3,15 @@ import { axios, useUtils } from "@/modules";
 import { defineStore } from "pinia";
 import { useToast } from "@/modules";
 import type { IBloodBag } from "@/interfaces";
+import type { BloodType } from "@/types";
 
 export const useDonationStore = defineStore("donation", () => {
   const { success, error } = useToast();
 
-  const getDonation = async (donationId: string): Promise<IDonation | void> => {
+  const getDonation = async (donationId: string): Promise<IDonation> => {
     return await axios
       .get<IDonation>(`/donations/${donationId}`)
-      .then(({ data }) => data)
-      .catch((err) => {
-        if (!useUtils().isTokenExpiredError(error)) {
-          error(
-            `Erro ao buscar a doação de código ${donationId}: ${err.message}`
-          );
-        }
-      });
+      .then(({ data }) => data);
   };
 
   const getAllDonations = async (): Promise<IDonation[] | void> => {
@@ -105,6 +99,52 @@ export const useDonationStore = defineStore("donation", () => {
       });
   };
 
+  const createDonationBloodBag = async (
+    hemocenterId: string,
+    donationId: string,
+    code: string,
+    date: string,
+    volume: number,
+    bloodType: BloodType
+  ) => {
+    await axios
+      .post("/blood-bags", {
+        hemocenterId,
+        donationId,
+        code,
+        date,
+        volume,
+        bloodType,
+      })
+      .then(() => success("Bolsa de sangue cadastrada com sucesso!"))
+      .catch((err) => {
+        if (!useUtils().isTokenExpiredError(error)) {
+          error(`Erro ao cadastrar a bolsa de sangue: ${err.message}`);
+        }
+      });
+  };
+
+  const updateDonationBloodBag = async (
+    id: string,
+    code: string,
+    date: string,
+    volume: number
+  ) => {
+    await axios
+      .put(`/blood-bags/${id}`, {
+        id,
+        code,
+        date,
+        volume,
+      })
+      .then(() => success("Bolsa de sangue atualizada com sucesso!"))
+      .catch((err) => {
+        if (!useUtils().isTokenExpiredError(error)) {
+          error(`Erro ao atualizar a bolsa de sangue: ${err.message}`);
+        }
+      });
+  };
+
   return {
     getDonation,
     getAllDonations,
@@ -112,5 +152,7 @@ export const useDonationStore = defineStore("donation", () => {
     createDonation,
     updateDonation,
     getDonationBloodBags,
+    createDonationBloodBag,
+    updateDonationBloodBag,
   };
 });

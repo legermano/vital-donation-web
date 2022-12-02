@@ -27,11 +27,21 @@ export const useUtils = () => {
     return user.height.toFixed(2);
   };
 
-  const userFormattedBirthDate = (user: IUser) => {
-    if (user.birthdate == null) return null;
-
-    return moment(user.birthdate, Constants.backendDateFormat).format(
+  const formatDate = (date: string) => {
+    return moment(date, Constants.backendDateFormat).format(
       Constants.frontendDateFormat
+    );
+  };
+
+  const formatDatetimeToFront = (datetime: string) => {
+    return moment(datetime, Constants.backendDateTimeFormat).format(
+      Constants.frontendDateTimeFormat
+    );
+  };
+
+  const formatDatetimeToBack = (datetime: string) => {
+    return moment(datetime, Constants.frontendDateTimeFormat).format(
+      Constants.backendDateTimeFormat
     );
   };
 
@@ -39,6 +49,8 @@ export const useUtils = () => {
     isTokenExpiredError,
     userWeightInKilos,
     userHeightInMeters,
-    userFormattedBirthDate,
+    formatDate,
+    formatDatetimeToFront,
+    formatDatetimeToBack,
   };
 };
